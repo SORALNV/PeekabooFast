@@ -83,22 +83,33 @@ enum BackgroundInputDriver {
     /// it for this exact point — so it is never rejected on frame grounds; every other candidate
     /// must still contain the point. The first enabled candidate that supports the required action
     /// wins. SwiftUI hit-tests can land on a non-pressable container whose pressable target is a
-    /// descendant, so descendants are searched before ancestors. Left clicks on text inputs (which
-    /// have no `AXPress`) fall back to focusing the element, mirroring `ActionInputDriver`.
+    /// descendant, so descendants are searched before ancestors. When value delivery is allowed, left clicks
+    /// prefer native focus for writable text inputs even if they advertise `AXPress`, mirroring
+    /// `ActionInputDriver`; a web editor can accept a press without assigning its keyboard receiver.
     @MainActor
     static func positionalClickTarget(
         inCandidates candidates: [any AutomationElementRepresenting],
         at point: CGPoint,
-        button: MouseButton) -> (element: any AutomationElementRepresenting, action: PositionalClickAction)?
+        button: MouseButton,
+        allowsAccessibilityValueDelivery: Bool = true)
+        -> (element: any AutomationElementRepresenting, action: PositionalClickAction)?
     {
         let spatiallyValid = self.spatiallyValidCandidates(candidates, at: point)
 
         let requiredAction = button == .right ? AXActionNames.kAXShowMenuAction : AXActionNames.kAXPressAction
+        let prefersFocus: (any AutomationElementRepresenting) -> Bool = {
+            button == .left && allowsAccessibilityValueDelivery && ActionInputDriver.prefersFocusForClick(
+                role: $0.role, subrole: $0.subrole, isFocusedSettable: $0.isFocusedSettable)
+        }
         if let actionable = spatiallyValid.first(where: {
             $0.isEnabled &&
-                $0.supportsAction(requiredAction) &&
-                (button == .right || !self.nonPressableContainerRoles.contains($0.role ?? ""))
+                (prefersFocus($0) ||
+                    ($0.supportsAction(requiredAction) &&
+                        (button == .right || !self.nonPressableContainerRoles.contains($0.role ?? ""))))
         }) {
+            if prefersFocus(actionable) {
+                return (actionable, .focus)
+            }
             let role = actionable.role ?? "<none>"
             let frame = String(describing: actionable.frame)
             self.logger.debug(
@@ -156,7 +167,7 @@ enum BackgroundInputDriver {
         }
     }
 
-    /// Coordinate clicks may focus text-entry controls that expose no press action. Keep this
+    /// Coordinate clicks may focus text-entry controls even when they advertise AXPress. Keep this
     /// narrower than element-targeted action input: Chromium marks full-page AXGroup containers
     /// value/focus-settable, and focusing those containers is not a delivered click.
     @MainActor
@@ -1626,7 +1637,12 @@ extension BackgroundInputDriver {
         }
 
         let candidates = self.hitTestCandidates(at: point, targetProcessIdentifier: targetProcessIdentifier)
-        guard let resolved = Self.positionalClickTarget(inCandidates: candidates, at: point, button: button) else {
+        guard let resolved = Self.positionalClickTarget(
+            inCandidates: candidates,
+            at: point,
+            button: button,
+            allowsAccessibilityValueDelivery: allowsAccessibilityValueDelivery)
+        else {
             throw PeekabooError.serviceUnavailable(
                 Self.noActionableElementMessage(at: point, targetProcessIdentifier: targetProcessIdentifier))
         }

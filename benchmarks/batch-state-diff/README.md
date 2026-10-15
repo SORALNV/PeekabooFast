@@ -177,30 +177,92 @@ focus or retries a send.
 - Standalone read-only diagnostics: compiled successfully with Swift 6.
 - `validation.json` records commands, outcomes and the retained final binary hash.
 
-## Background follow-up (incomplete)
+## Controlled background comparison after editor-focus repair
 
-`discord.py` and `repeat-discord.py` now accept `--background-only`. This starts
-MCP without foreground authority, omits every focus operation including
-preparation, and passes explicit snapshot receipts to keyboard tools. The batch
-version uses `snapshot_from_step`; the sequential version copies the same
-observation ID in the client. The workload becomes 11 driver steps and five
-verifications (16 outer MCP calls versus one). This changes the workload and must
-not be pooled with the 12-step foreground cohorts above.
+`discord.py` and `repeat-discord.py` accept `--background-only`. MCP starts
+without foreground authority and every focus operation is omitted, including
+server-reset preparation. The workload has 11 driver steps and five verifications:
+16 outer MCP calls upstream versus one `execute_steps` call in the fork. Both use
+fresh snapshot references, literal typing and identical readback predicates.
 
-Six exploratory failed attempts are retained in
-`background-pilots-2026-10-15`; their experimental binaries differ. They are not
-a controlled before/after result and establish no successful background send.
-Some trials used a separate foreground fixture and reported its focus/value
-preserved. The fixture nevertheless obstructed the user's desktop. That fails
-the practical background requirement, regardless of those narrower measurements.
-Live UI testing stopped when the user reported the interference. The fixture was
-terminated and Discord hidden. The final five-per-version background comparison
-has not been run. A later explicitly authorized unattended session produced two
-verified native sends under differing exploratory conditions and one verified CUA
-send. Seven native pilot records, including failures, are retained in
-`background-resumed-2026-10-15`. They do not certify workspace preservation or
-establish a controlled success rate. The latest automatic Electron AX handshake
-pilot overlapped a confirmed screen lock; its live effectiveness remains unverified. See [the current contract and limits](../../docs/background-execution.md).
+After manual unlock, Discord was prepositioned onscreen behind an existing Finder
+window on the same regular Space. This initial setup used authorized foreground
+diagnostics and is excluded from the background claim. The complete trial, including
+subsequent server resets, was monitored. No temporary foreground fixture was created.
+Electron AXManualAccessibility had been requested as a common precondition for
+both versions; AXEnhancedUserInterface stayed disabled. Prior diagnostic sends
+mean this is not a cold-start test. `warmup_sends=0` only describes runner warmups.
+
+| Metric | Upstream baseline (`95c61d71`) | Editor-focus fork (`ddfe3a68`) |
+| --- | ---: | ---: |
+| Verified sends with preserved workspace | 2/5 (40%) | 5/5 (100%) |
+| Successful-run median | 16.121 s | 11.117 s |
+| Successful min–max | 15.755–16.487 s | 10.941–13.214 s |
+| Driver steps / explicit verifications | 11 / 5 | 11 / 5 |
+| Outer MCP calls | 16 | 1 |
+
+Successful-run median: **31.0% shorter (1.45×)**. Failure timings are retained;
+three baseline failures are not included in that conditional median. A five-trial
+cohort supports this local observation, not a general success probability or tail
+estimate. This combines all fork changes and does not isolate batching or focus.
+LLM inference, process startup and the common server reset are outside the timed
+workload. Preparation is still inside the workspace-preservation interval.
+
+Records are in `background-visible-order-2026-10-15/`: all ten outcomes, ABBA order,
+binary/harness/monitor hashes, exact harness copies, numeric monitor logs, conditions,
+and independent CUA readback. All **1,324 samples** preserve foreground Finder, its
+exact native receiver, pointer, onscreen window order, target visibility and Space
+change count. All ten trials pass workspace preservation, including three failed
+baseline sends. CUA independently sees two baseline and five fork messages plus
+an empty composer. Sampling at roughly 100 ms cannot exclude intersample changes.
+
+The remaining focus cause was AXPress on Discord's editable composer: the action
+was accepted without establishing its native keyboard receiver. Prefer writable
+AXFocused on text-entry controls when policy permits. The pre-repair same-Space
+pilot failed before typing; the fixed pilot succeeded. The three final baseline
+failures lost proof of the receiver during typing and stopped without blind retry.
+[Diagnosis](../../docs/discord-window-diagnosis.md) describes the native evidence.
+
+The final source additionally preserves combo-box AXPress semantics and makes
+positional editor focus take precedence over a pressable ancestor. The measured
+cohort used semantic AXTextArea clicks; that route is unchanged. The measured
+binary hash stays distinct from the final qualification build. Final source:
+118 related driver tests, six monitor-acceptance tests, and the full 2,391-case
+`test:safe` suite plus script/Node checks pass. Root lint has 110 existing warnings,
+changed driver/test files have zero strict-lint violations, and format/docs lint pass.
+
+### Retained unsuccessful acceptance cohort and monitor diagnosis
+
+`background-controlled-2026-10-15/` retains the preceding complete ten attempts.
+It verified 2/5 baseline and 5/5 fork sends but certified **0/5 versus 0/5** workspace
+acceptance under a strict all-window inventory rule. Foreground, receiver, pointer,
+target visibility and Space stayed stable; all-window ordering changed. Do not
+reclassify these attempts as passed or pool them with the subsequent cohort.
+
+A separate diagnostic pilot identified offscreen windows created/removed by Apple's
+CursorUIViewService (PID 625). The onscreen inventory stayed constant. Its numeric
+inventory changes and aggregate are retained in
+`background-unlocked-pilots-2026-10-15/window-churn-diagnosis.json`.
+Monitor schema 2 therefore measures **onscreen** window ordering for visible
+interference and retains all-window ordering/inventory changes as diagnostic data.
+Missing schema-2 onscreen evidence cannot fall back to an all-window pass. A fresh
+full cohort used the revised monitor; it did not retry only failed trials.
+The preceding harness is preserved in `background-all-window-harness/`.
+
+### Scope and unresolved cases
+
+This is an already-onscreen, same-Space result. Hidden/off-Space navigation remains
+unresolved: the post-unlock hidden pilot failed verification. No product fallback
+activates/unhides targets or switches Spaces during user work. The result does not
+establish a general replacement for ChatGPT Computer Use. Discord was hidden and
+the original ChatGPT/Codex app restored after testing.
+
+Six earlier failed exploratory attempts in `background-pilots-2026-10-15`, seven
+resumed attempts in `background-resumed-2026-10-15`, and four later unlocked pilots
+in `background-unlocked-pilots-2026-10-15` use differing prerequisites/binaries and
+remain separate. Earlier foreground fixtures obstructed the user's work and were
+removed. Those runs do not count as practical background successes. See
+[the contract and limits](../../docs/background-execution.md).
 
 The exact three Python harness sources for the completed foreground cohort are
 preserved in `foreground-harness/`. Their SHA-256 hashes match all three entries
@@ -219,7 +281,7 @@ both versions. Do not run this while the Mac is locked.
 ```sh
 swiftc -swift-version 6 benchmarks/batch-state-diff/focus-monitor.swift -o /tmp/peekaboofast-focus-monitor
 python3 benchmarks/batch-state-diff/repeat-discord.py \
-  --before /tmp/peekaboo-baseline --after /tmp/peekaboofast-current \
+  --before /tmp/peekaboo-baseline --after /tmp/peekaboofast-editor-focus \
   --pid CURRENT_DISCORD_PID --window CURRENT_WINDOW_ID \
   --server '自作erの集い' --recipient 'たぬき' \
   --dm-label 'たぬき (ダイレクトメッセージ)' \
@@ -228,8 +290,11 @@ python3 benchmarks/batch-state-diff/repeat-discord.py \
 ```
 
 The monitor reports only numeric receiver/window state, pointer coordinates,
-Space-change counts and a hash of other windows' ordering. It does not publish
+Space-change counts, onscreen ordering hashes and numeric inventory changes.
+It does not publish
 window titles, UI text, or message histories. A missing keyboard receiver or
 insufficient samples is unknown evidence, never a successful preservation result.
 `python3 benchmarks/batch-state-diff/test_monitor_summary.py` checks acceptance
-against focus theft, pointer motion, covering another window and missing evidence.
+against focus theft, pointer motion, visible reordering, hidden-window churn and
+missing evidence. Schema-2 logs retain legacy all-window hashes for diagnosis;
+onscreen windows determine the window-order acceptance predicate.

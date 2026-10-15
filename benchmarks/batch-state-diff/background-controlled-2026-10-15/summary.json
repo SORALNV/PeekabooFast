@@ -1,0 +1,20 @@
+{
+  "before": {
+    "successes": 0,
+    "attempts": 5,
+    "success_rate": 0.0,
+    "successful_elapsed_ms": [],
+    "median_ms": null,
+    "min_ms": null,
+    "max_ms": null
+  },
+  "after": {
+    "successes": 0,
+    "attempts": 5,
+    "success_rate": 0.0,
+    "successful_elapsed_ms": [],
+    "median_ms": null,
+    "min_ms": null,
+    "max_ms": null
+  }
+}

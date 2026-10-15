@@ -1,0 +1,8 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "PeekabooFast unlock hidden 01",
+  "phase": "preparation",
+  "error": "{'is_error': False, 'tool': None, 'meta': {}, 'message': 'Verification unknown after 22 sample(s) in 10.000s.\\nApplication: Discord (PID 24935)\\nReason: Verification deadline has insufficient time for a fresh accessibility traversal\\nPredicates:\\n1. element_exists: unknown — Verification deadline has insufficient time for a fresh accessibility traversal', 'verification': None}"
+}

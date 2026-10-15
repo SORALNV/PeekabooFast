@@ -725,6 +725,25 @@ extension ActionInputDriverTests {
     }
 
     @MainActor
+    @Test(arguments: [false, true], ["AXTextArea", "AXComboBox"])
+    func `press advertising editor receives native focus when value policy permits`(
+        _ allowed: Bool, role: String) async throws
+    {
+        let element = ActionInputMockAutomationElement(
+            role: role,
+            frame: CGRect(x: 10, y: 20, width: 100, height: 40),
+            actionNames: [AXActionNames.kAXPressAction],
+            isValueSettable: true,
+            isFocusedSettable: true)
+        let result = try await ActionInputDriver().tryClickForTesting(
+            element: element, allowAccessibilityValueFallback: allowed)
+        let prefersFocus = allowed && role == "AXTextArea"
+        #expect(element.setFocusedValues == (prefersFocus ? [true] : []))
+        #expect(element.performedActions == (prefersFocus ? [] : [AXActionNames.kAXPressAction]))
+        #expect(result.actionName == (prefersFocus ? kAXFocusedAttribute : kAXPressAction))
+    }
+
+    @MainActor
     @Test
     func `text field action click focuses when press is unavailable`() async throws {
         let element = ActionInputMockAutomationElement(

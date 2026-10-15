@@ -1,0 +1,14 @@
+{
+  "mode": "batch",
+  "elapsed_ms": 11082.733834,
+  "mcp_calls": 1,
+  "driver_steps": 11,
+  "verifications": 5,
+  "success": true,
+  "initial_state": "server",
+  "recipient": "たぬき",
+  "text": "PeekabooFast editor focus 03",
+  "background_only": true,
+  "llm_included": false,
+  "composer_empty": true
+}

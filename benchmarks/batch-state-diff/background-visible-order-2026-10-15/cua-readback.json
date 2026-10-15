@@ -1,0 +1,23 @@
+{
+  "observer": "CUA native AX state, independent of benchmark MCP",
+  "observed_at_utc": "2026-10-15 11:09 UTC",
+  "run_tag": "bcbaeaf9",
+  "confirmed_sent_suffixes": [
+    "A01",
+    "B02",
+    "B03",
+    "A04",
+    "B06",
+    "B07",
+    "B10"
+  ],
+  "recipient": "たぬき",
+  "composer_empty": true,
+  "contains_private_history": false,
+  "baseline_failed_suffixes": [
+    "A05",
+    "A08",
+    "A09"
+  ],
+  "failed_suffixes_not_visible_in_sent_history": true
+}

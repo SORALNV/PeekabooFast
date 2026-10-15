@@ -1,0 +1,21 @@
+{
+  "condition": "Prepositioned onscreen Discord behind an existing Finder window on the same regular Space; no fixture windows",
+  "diagnostic_setup_outside_cohort": "During explicitly authorized unattended diagnostics, unhid/activated Discord once and focused an existing Finder window. This setup is excluded from background acceptance and is not claimed non-disruptive.",
+  "common_accessibility_precondition": "Electron AXManualAccessibility had been requested before both versions; AXEnhancedUserInterface remained disabled. No mode changes during cohort.",
+  "prior_sends": "Diagnostic pilots and the retained all-window-order cohort preceded this cohort. warmup_sends=0 describes runner warmups only; this was not a cold-start test.",
+  "acceptance": "Monitor covers MCP startup, background server reset, timed workload and independent readback; both versions receive the same monitor and predicates.",
+  "interpretation": "Five attempts per version, growing history, one host/window/Space; no inference latency or universal reliability estimate.",
+  "baseline_successful_median_ms": 16121.1488125,
+  "after_successful_median_ms": 11116.59525,
+  "successful_median_reduction_percent": 31.043405285233604,
+  "success_counts": {
+    "before": 2,
+    "after": 5,
+    "attempts_per_version": 5
+  },
+  "all_trials_workspace_preserved": true,
+  "monitor_samples": 1324,
+  "monitor_scope": "Onscreen non-target window ordering, target visibility, foreground app, exact keyboard receiver, pointer and Space-change events. Offscreen inventory churn remains diagnostic metadata.",
+  "cleanup": "Discord hidden with confirmed native result, original ChatGPT/Codex process restored with verified foreground result; no temporary fixture created.",
+  "post_measurement_source_hardening": "After the fixed-binary cohort, preserved AXComboBox press semantics and made positional editor focus win over an actionable ancestor. The measured workflow used semantic AXTextArea clicks, whose route is unchanged. Final qualification build hash is recorded separately."
+}

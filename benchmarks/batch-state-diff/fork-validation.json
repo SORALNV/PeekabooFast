@@ -1,31 +1,28 @@
 {
-  "background_discord_status": "incomplete; two exploratory native sends verified under different prerequisites; no controlled background cohort",
-  "live_ui_tests": "resumed with explicit unattended permission, then stopped after confirmed Mac lock; manual unlock required",
-  "current_binary": {
-    "path": "/tmp/peekaboofast-current",
-    "sha256": "f27bfeefbfa625db3cc39f4d32d7948656dcc3227951435ff8c53ecf8c1b175b",
-    "gui_certified": false,
-    "build": "debug, arm64, Swift 6.4, macOS 26.6.2"
-  },
+  "background_discord_status": "same-Space onscreen target behind Finder: controlled 2/5 baseline versus 5/5 fixed; hidden/off-Space unresolved",
+  "live_ui_tests": "completed under explicit unattended permission after manual unlock; Discord hidden and original app restored afterward",
   "checks": {
-    "build_cli": "passed after final source edits; exit 0",
+    "build_cli": "passed: final qualification build exit 0",
     "batch_regression_tests": {
       "status": "passed",
       "reported_cases": 13
     },
     "action_input_tests": {
       "status": "passed",
-      "reported_cases": 91
+      "reported_cases": 118,
+      "scope": "latest ActionInputDriver and positional-target filter, 3 suites"
     },
-    "changed_swift_lint": "new bootstrap/inventory/batch files passed strict lint with zero violations; existing prompt warnings included in root count",
-    "root_swift_lint": "passed, 110 pre-existing non-serious warnings",
-    "swiftformat": "passed, 0/2107 require formatting",
+    "changed_swift_lint": "latest four changed driver/test files: strict lint passed, zero violations",
+    "root_swift_lint": "passed: 110 pre-existing non-serious warnings, zero serious; changed driver/test files strict zero",
+    "swiftformat": "passed: 0/2109 require formatting",
     "docs_lint": "passed",
     "test_safe": "passed: 2391 reported Swift Testing tests plus script/Node checks; exit 0",
     "core_regressions": "13 batch + 1 verification-budget tests passed; 29 prompt tests passed",
     "kit_regressions": "31 Swift Testing + 20 XCTest tests passed; separate bootstrap/observation/classifier run: 49 passed",
-    "monitor": "Swift 6 compile passed; Python acceptance regressions 4/4 passed",
-    "locked_session_guard": "CLI inspect_ui reported locked prerequisite; read-only diagnostic, no mutation tool requested"
+    "monitor": "Swift 6 schema-2 monitor compile passed; Python acceptance regressions 6/6 passed",
+    "locked_session_guard": "CLI inspect_ui reported locked prerequisite; read-only diagnostic, no mutation tool requested",
+    "latest_editor_focus_regressions": "passed: 118 tests in 3 suites, including AXPress/focus policy, ComboBox press compatibility and positional ancestor selection",
+    "latest_test_safe": "passed: exit 0; 112 + 1475 + 50 + 147 + 607 = 2391 Swift Testing cases plus script/Node checks"
   },
   "historical_foreground_comparison": {
     "path": "repeated-uninterrupted-2026-10-15",
@@ -36,7 +33,51 @@
     "applies_to_current_binary": false
   },
   "experimental_native_single_click_delivery": "removed; never shipped",
-  "temporary_ui_cleanup": "no fixture window/process left; Discord hidden again with confirmed background native result",
+  "temporary_ui_cleanup": "Discord hidden and original ChatGPT/Codex app restored with verified native results; existing Finder window left intact; no temporary fixture created",
   "baseline_commit": "1e42f1d9053109d6d19e604504ea80bc229a88e8",
-  "implementation_sha256": "27c5bb358b5cef48fac77fe032363e47ed91cf1dda917bed35af3dd55d0a648d"
+  "previous_published_binary": {
+    "path": "/tmp/peekaboofast-current",
+    "sha256": "f27bfeefbfa625db3cc39f4d32d7948656dcc3227951435ff8c53ecf8c1b175b",
+    "gui_certified": false,
+    "build": "debug, arm64, Swift 6.4, macOS 26.6.2"
+  },
+  "measured_background_binary": {
+    "path": "/tmp/peekaboofast-editor-focus",
+    "sha256": "ddfe3a683486f9cabde19f3416160907cea5fe9f82589956833364ca970cf721",
+    "scope": "same-Space, already-onscreen background under Finder; final source hardening differs only for combo boxes and positional candidate priority"
+  },
+  "controlled_background_comparison": {
+    "path": "background-visible-order-2026-10-15",
+    "before_successes": 2,
+    "after_successes": 5,
+    "attempts_per_version": 5,
+    "before_successful_median_ms": 16121.1488125,
+    "after_successful_median_ms": 11116.59525,
+    "native_samples": 1324,
+    "workspace_preservation_all_trials": true,
+    "independent_cua_messages": 7,
+    "composer_empty": true,
+    "hidden_offspace_supported": false
+  },
+  "latest_source_sha256": {
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/ActionInputDriver.swift": "448221bfb15fa51c346f842dcf84653d87b623cbbd50b305de279757e92512f8",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/BackgroundInputDriver.swift": "ad238600f7514c80a7895f9a958a7095735f295daac47a9c9b5c78fb5ef3b424",
+    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/ActionInputDriverTests.swift": "271f2170812d8b4ebf0cb1bb81321642a4c98095a31be0ba4bb2eb66c6cc8c80",
+    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/BackgroundInputDriverPositionalTargetTests.swift": "d22108463dee90de5bdddc65736860b6846d3003009931d9645ad639b8b97f6f"
+  },
+  "post_measurement_hardening": "Final source preserves combo-box AXPress and chooses positional editor focus before a pressable ancestor; semantic AXTextArea path used by the measured Discord cohort is unchanged.",
+  "current_binary": {
+    "path": "/tmp/peekaboofast-qualified",
+    "sha256": "370803883f2e40f6a1bdca360477a0cbbe7cad0be4f0d1b50f63612b2985249c",
+    "build": "debug, arm64, Swift 6.4, macOS 26.6.2",
+    "qualification": "final source CLI build + full safe tests + 118 driver tests; live cohort used the separately recorded editor-focus binary",
+    "same_binary_as_live_cohort": false
+  },
+  "validation_log_sha256": {
+    "peekaboofast-final-test-safe.log": "e534a97484796eb52ce671d693aac24201d617925de935e0585a0f9779b1d23f",
+    "peekaboofast-final-qualified-build.log": "321325c73cef5c8fb85a43c656bd1eec06aaf1ce6734ac8a377339604f34bebc",
+    "peekaboofast-editor-final-tests.log": "868d51521d57ddfb63d200f5c4bd71003df5777ec3e338afb866493c38815b93",
+    "peekaboofast-final-lint-clean.log": "f95893ef71f14b6ab8d6441e6babc9fd7922e84b0cb768e93dab21404009eacf",
+    "peekaboofast-final-format-check.log": "a7d2a8891cf6586aad035bacbe40b5abc05013526ff708d6e40010b942052c36"
+  }
 }

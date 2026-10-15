@@ -1,0 +1,25 @@
+{
+  "success": false,
+  "mode": "sequential",
+  "background_only": true,
+  "text": "Peekaboo 1d2214d7 A04",
+  "phase": "timed_workload",
+  "error": "{'is_error': True, 'tool': None, 'meta': {'delivery_mechanism': 'window_targeted_events', 'delivery_mode': 'background', 'dispatch_state': 'may_have_dispatched', 'dispatched_unit_count': 15, 'effect': 'unverifiable', 'escalation': 'observe_before_retry', 'evidence': 'completion_unknown', 'mutation_dispatched': True, 'requires_fresh_observation': True, 'retry_safe': False, 'retry_safety': 'unsafe', 'state': 'indeterminate'}, 'message': \"Type outcome is indeterminate: input may have been delivered; do not retry blindly. At least 15 input unit(s) were emitted. Delivery detail: Invalid input: Invalid target: Exact-window keyboard focus is not on the target window at dispatch. Background keystrokes follow the application's own keyboard focus and cannot be aimed at a window that does not hold it; such a window also refuses accessibility focus requests, so no amount of retrying moves focus there in the background. To write into this window without focusing it, observe it and set its editable element's accessibility value (`set-value` command, `set_value` tool). Use foreground delivery only when the window may take focus. Observe the target before taking another action. Invalid input: Invalid target: Exact-window keyboard focus is not on the target window at dispatch. Background keystrokes follow the application's own keyboard focus and cannot be aimed at a window that does not hold it; such a window also refuses accessibility focus requests, so no amount of retrying moves focus there in the background. To write into this window without focusing it, observe it and set its editable element's accessibility value (`set-value` command, `set_value` tool). Use foreground delivery only when the window may take focus.\", 'verification': None}",
+  "elapsed_ms": 11259.98925,
+  "workspace_monitor": {
+    "samples": 124,
+    "preserved": false,
+    "changed_fields": [
+      "non_target_order_sha256",
+      "non_target_windows_above"
+    ],
+    "target_remained_background": true,
+    "includes_preparation": true,
+    "sampling_limit": "Transient changes between samples may be missed"
+  },
+  "trial": 4,
+  "version": "before",
+  "exit_code": 1,
+  "trial_started_at_unix_seconds": 1792062125.12735,
+  "trial_finished_at_unix_seconds": 1792062139.279466
+}

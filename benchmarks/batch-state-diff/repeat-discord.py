@@ -14,9 +14,12 @@ from pathlib import Path
 
 def summarize_monitor(samples, target_pid):
     """A send and preserved workspace are separate acceptance conditions, including preparation."""
+    visible_inventory = bool(samples) and all(sample.get('monitor_schema') == 2 for sample in samples)
+    order_keys = (['visible_non_target_order_sha256', 'visible_non_target_windows_above']
+                  if visible_inventory else ['non_target_order_sha256', 'non_target_windows_above'])
     keys = ['front_pid', 'ax_front_pid', 'pointer_x', 'pointer_y', 'target_onscreen',
-            'target_present', 'non_target_order_sha256', 'non_target_windows_above', 'space_change_count',
-            'receiver_hash', 'receiver_window_id', 'receiver_pid']
+            'target_present', 'space_change_count',
+            'receiver_hash', 'receiver_window_id', 'receiver_pid'] + order_keys
     changed = [key for key in keys if len({sample.get(key) for sample in samples}) != 1]
     sufficient = len(samples) >= 2 and all(all(key in sample and sample[key] is not None for key in keys)
                                          and sample.get('space_change_count') == 0
@@ -28,7 +31,9 @@ def summarize_monitor(samples, target_pid):
                                          for sample in samples)
     return {'samples': len(samples), 'preserved': sufficient and not changed, 'changed_fields': changed,
             'target_remained_background': bool(samples) and all(sample.get('front_pid') != target_pid for sample in samples),
-            'includes_preparation': True, 'sampling_limit': 'Transient changes between samples may be missed'}
+            'includes_preparation': True,
+            'window_order_scope': 'onscreen windows; all-window churn retained for diagnosis' if visible_inventory else 'all windows (legacy monitor)',
+            'sampling_limit': 'Transient changes between samples may be missed'}
 
 
 def main():

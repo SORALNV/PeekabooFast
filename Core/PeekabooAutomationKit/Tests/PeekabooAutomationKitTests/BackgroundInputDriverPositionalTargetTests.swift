@@ -47,6 +47,30 @@ struct BackgroundInputDriverPositionalTargetTests {
         #expect(element.setSelectedValues.isEmpty)
     }
 
+    @Test(arguments: [false, true], ["AXTextArea", "AXComboBox"])
+    @MainActor
+    func `press advertising positional editor prefers focus only when value delivery is permitted`(
+        _ allowed: Bool, role: String)
+    {
+        let field = PositionalMockElement(
+            role: role,
+            frame: CGRect(x: 0, y: 0, width: 100, height: 40),
+            supportedActions: [AXActionNames.kAXPressAction],
+            isValueSettable: true,
+            isFocusedSettable: true)
+        let pressableAncestor = PositionalMockElement(
+            role: "AXButton",
+            frame: CGRect(x: 0, y: 0, width: 120, height: 50),
+            supportedActions: [AXActionNames.kAXPressAction])
+        let resolved = BackgroundInputDriver.positionalClickTarget(
+            inCandidates: [field, pressableAncestor],
+            at: CGPoint(x: 20, y: 20),
+            button: .left,
+            allowsAccessibilityValueDelivery: allowed)
+        #expect(resolved?.action == (allowed && role == "AXTextArea" ? .focus : .press))
+        #expect((resolved?.element as? PositionalMockElement) === field)
+    }
+
     @Test
     @MainActor
     func `focus-only resolution never presses a button or selects a row`() {

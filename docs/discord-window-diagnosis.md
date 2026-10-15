@@ -113,7 +113,7 @@ initial versus continuation frame checks, observation timeout diagnostics, and
 remaining AX deadline budgets. Repeated sending results and the precise common
 starting conditions are recorded in the benchmark README.
 
-## Post-unlock observation and final comparison
+## Historical foreground post-unlock comparison
 
 Two post-unlock cohorts exposed real foreground changes, distinct from the
 observation-timeout misclassification fixed above. Native AX/Workspace focus
@@ -133,6 +133,37 @@ report; no failed attempts are removed from their cohort success rates.
 This validates the repaired workflow under a stable foreground condition. It
 does not claim to prevent another application from taking focus. Exact target
 identity checks continue to stop input when that condition changes.
+
+## Remaining background focus: AXPress does not establish an editor receiver
+
+The later same-Space reproduction separates native application focus from global
+foreground focus. Finder remained frontmost with the same system keyboard receiver.
+The published fork could navigate Discord, but AXPress on its composer left the
+application's AXFocusedUIElement absent (`noValue`, -25212). CUA clicking only that
+composer established AXTextArea as Discord's native receiver without activating
+Discord. This localizes the remaining defect to click delivery semantics rather
+than requiring the user to keep Discord foreground.
+
+The repair prefers writable AXFocused for enabled text-entry roles when value
+delivery is allowed, even if AXPress is advertised. An accessibility-value opt-out
+continues to use AXPress. Exact target validation is retained, no global pointer
+events or foreground fallback are added, and uncertain input is never replayed.
+The pilot then verified a complete background send. New policy regressions for
+both semantic and positional clicks pass with the surrounding driver tests.
+
+The final background cohort completed 2/5 upstream versus 5/5 repaired sends,
+with successful medians 16.121 s versus 11.117 s. All ten trials preserved the
+monitored workspace. The three upstream failures lost proof of the exact native
+receiver during typing and stopped without blind retry. CUA independently read
+back all seven sent messages and an empty composer. See the benchmark README for
+raw trials, binary hashes, monitor changes and small-sample limits.
+
+This validates an already-onscreen target behind Finder on the same regular
+Space. A hidden/off-Space pilot still failed to verify navigation, so that scope
+remains unresolved. It must not be repaired by stealing focus during normal user
+work. The Electron AXManualAccessibility request was common preparation for both
+versions; AXEnhancedUserInterface remained disabled. No private Discord contents
+are retained in the diagnostic artifacts.
 
 ## Reproduce the read-only diagnostic
 

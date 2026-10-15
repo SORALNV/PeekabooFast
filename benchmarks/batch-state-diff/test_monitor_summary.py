@@ -35,6 +35,22 @@ class MonitorAcceptanceTests(unittest.TestCase):
     def test_stable_target_foreground_is_not_background_success(self):
         self.assertFalse(module.summarize_monitor(self.samples(), 100)['preserved'])
 
+    def test_visible_inventory_ignores_hidden_window_churn_but_rejects_visible_reordering(self):
+        samples = self.samples()
+        for sample in samples:
+            sample.update(monitor_schema=2, visible_non_target_order_sha256='visible',
+                          visible_non_target_windows_above=2)
+        samples[-1].update(non_target_order_sha256='hidden churn', non_target_windows_above=3)
+        self.assertTrue(module.summarize_monitor(samples, 200)['preserved'])
+        samples[-1]['visible_non_target_order_sha256'] = 'reordered'
+        self.assertFalse(module.summarize_monitor(samples, 200)['preserved'])
+
+    def test_visible_monitor_missing_visible_order_never_falls_back_to_all_windows(self):
+        samples = self.samples()
+        for sample in samples:
+            sample['monitor_schema'] = 2
+        self.assertFalse(module.summarize_monitor(samples, 200)['preserved'])
+
     def test_stable_complete_background_evidence_passes(self):
         self.assertTrue(module.summarize_monitor(self.samples(), 200)['preserved'])
 

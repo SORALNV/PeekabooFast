@@ -1,0 +1,36 @@
+{
+  "samples": 124,
+  "visible_order_variants": 1,
+  "visible_above_counts": [
+    18
+  ],
+  "inventory_changes": [
+    {
+      "time": 1792062330.82252,
+      "added": [
+        {
+          "id": 329904,
+          "layer": 0,
+          "onscreen": false,
+          "pid": 625
+        }
+      ],
+      "removed": []
+    },
+    {
+      "time": 1792062330.937108,
+      "added": [],
+      "removed": [
+        {
+          "id": 329901,
+          "layer": 0,
+          "onscreen": false,
+          "pid": 625
+        }
+      ]
+    }
+  ],
+  "changed_process_identification": "PID 625: Apple CursorUIViewService, /System/Library/PrivateFrameworks/TextInputUIMacHelper.framework/...",
+  "scope": "Additional diagnostic pilot, not pooled with either controlled cohort",
+  "raw_local_monitor_sha256": "6b47eb1f7970cee7f7d12f9ba3148e92405e976327b3e6dc080b5de2701600a7"
+}

@@ -1,0 +1,25 @@
+{
+  "success": false,
+  "mode": "sequential",
+  "background_only": true,
+  "text": "Peekaboo 1d2214d7 A08",
+  "phase": "timed_workload",
+  "error": "{'is_error': True, 'tool': None, 'meta': {'dispatch_state': 'may_have_dispatched', 'effect': 'unverifiable', 'escalation': 'observe_before_retry', 'evidence': 'completion_unknown', 'mutation_dispatched': True, 'requires_fresh_observation': True, 'retry_safe': False, 'retry_safety': 'unsafe', 'state': 'indeterminate'}, 'message': 'The type mutation returned without valid canonical result semantics. Observe the intended target before retrying and update the runtime host.', 'verification': None}",
+  "elapsed_ms": 8244.305375,
+  "workspace_monitor": {
+    "samples": 99,
+    "preserved": false,
+    "changed_fields": [
+      "non_target_order_sha256",
+      "non_target_windows_above"
+    ],
+    "target_remained_background": true,
+    "includes_preparation": true,
+    "sampling_limit": "Transient changes between samples may be missed"
+  },
+  "trial": 8,
+  "version": "before",
+  "exit_code": 1,
+  "trial_started_at_unix_seconds": 1792062189.892977,
+  "trial_finished_at_unix_seconds": 1792062201.12472
+}

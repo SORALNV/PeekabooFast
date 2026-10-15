@@ -5,11 +5,15 @@ CLI commands and Swift module names remain `peekaboo` / `Peekaboo` for compatibi
 
 This fork adds bounded MCP batches, explicit snapshot references between batch steps,
 AX state differences, and fixes for exact-window discovery and focus validation.
-**Unattended Discord background sending is still under development.**
-The measured 28.1% Discord speed improvement required the target to remain foreground;
-it is not a background reliability claim. See [measurements](benchmarks/batch-state-diff/README.md),
-[batch API](docs/batch-state-diff.md), [background limitations](docs/background-execution.md),
-and the [external-client prompt](docs/background-client-prompt.md).
+A controlled Discord background comparison on one host achieved **2/5 → 5/5**
+successful sends, with successful-run medians **16.121 → 11.117 seconds (31.0% shorter)**.
+Discord remained onscreen behind Finder on the same Space; the native monitor found
+no foreground, receiver, pointer, visible window-order or Space changes in 1,324 samples.
+**Hidden/off-Space operation remains unresolved.** This is limited evidence, not a
+universal background reliability or ChatGPT Computer Use replacement claim.
+See [measurements](benchmarks/batch-state-diff/README.md), [batch API](docs/batch-state-diff.md),
+[background limits](docs/background-execution.md), and the
+[external-client prompt](docs/background-client-prompt.md).
 
 Build this fork from source with `pnpm install --frozen-lockfile` and `pnpm run build:cli`.
 The Homebrew, npm, and release installation links below refer to the upstream project.

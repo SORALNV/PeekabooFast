@@ -31,8 +31,8 @@ it, even if the automation target itself never activates.
   set `AXEnhancedUserInterface`, activate an app, or move a window. Setter acceptance
   is not treated as success; fresh AX evidence and exact delivery checks still apply.
   See [Electron's accessibility documentation](https://github.com/electron/electron/blob/main/docs/tutorial/accessibility.md).
-  This latest integration has unit coverage; its first live pilot overlapped a
-  confirmed screen lock and does not establish effectiveness.
+  A subsequent unlocked same-Space background cohort completed with this handshake
+  requested as a common precondition for both versions.
 - `execute_steps.snapshot_from_step` explicitly passes a preceding observation's
   snapshot ID to background `type`/`press` while retaining their normal validation.
 - Semantic clicks can select an enabled AXRow exposing writable AXSelected but no
@@ -42,65 +42,80 @@ it, even if the automation target itself never activates.
   replay after uncertain AXPress failure. It is not a claimed fix for every
   Discord row: some observed rows expose neither writable selection nor AXPress.
 
-## Discord status: incomplete
+## Discord status: same-Space background verified, hidden/off-Space unresolved
 
-Reliable end-to-end background Discord sending remains unestablished. During a
-separately authorized unattended follow-up, CUA sent one test DM and two native
-exploratory runs verified a sent message plus an empty composer. Their prerequisites
-and binaries differed, and full workspace preservation was not certified. These
-are useful diagnostic successes, not a controlled success rate or a replacement
-claim for ChatGPT Computer Use. The foreground benchmark measures a different condition.
+After the user unlocked the Mac, a controlled ten-attempt cohort ran without
+foreground authority. Each trial reset to the same server through a background
+action, opened the DM tab, selected たぬき, typed a unique test message, sent it,
+and verified the exact sent text and empty composer. Discord was already onscreen
+behind an existing Finder window on the same regular Space. No fixture was created.
 
-Observed failure modes include:
+| Result | Pristine upstream | PeekabooFast editor-focus build |
+| --- | ---: | ---: |
+| Verified sends with workspace preserved | 2/5 | 5/5 |
+| Successful-run median | 16.121 s | 11.117 s |
+| Outer MCP requests | 16 | 1 |
 
-1. After a background navigation dispatch, the window title changes but the AX
-   content can still describe the previous page. CUA also observed a title/content
-   disagreement and an image of the previous page. The specific Chromium/macOS
-   internal cause has not been isolated.
-2. Native Space queries showed a target outside the reported active Space during
-   some failures. Other controlled samples reported the target on screen while a
-   separate foreground fixture stayed active. Therefore Space membership alone
-   is not a complete explanation.
-3. Discord sidebar rows sometimes advertise only AXShowMenu/AXScrollToVisible,
-   and AX-focused editors can still yield no application keyboard receiver.
-   Input correctly stops before typing when no exact receiver can be proved.
-4. A batch using only background authority previously could not pass a newly
-   created snapshot ID to a later step. The explicit reference feature fixes
-   that orchestration limitation; it does not manufacture native focus.
+The successful-run median was 31.0% shorter. This comparison includes all fork
+changes; it does not isolate batching or the editor-focus repair. Failed trials
+remain in the denominator. Five attempts on one host are not a general reliability
+estimate, and medians conditional on success omit three failed baseline timings.
+No LLM inference is included. See
+[`background-visible-order-2026-10-15`](../benchmarks/batch-state-diff/background-visible-order-2026-10-15).
 
-Disabling the enhanced AX mode exposed rows without AXPress; requesting Electron's
-official manual accessibility mode restored AXPress in a native probe even though
-its attribute readback stayed false. This motivates the bounded manual handshake;
-it does not justify accepting a false readback as a successful input operation.
-Experiments with target-only activation records, window-routed single clicks,
-and Space membership did not establish reliable background sending. Experimental
-single-click delivery changes were removed. No OS security protections were changed.
+A native monitor covered startup, server preparation, timed work and readback.
+All 1,324 samples preserved foreground Finder, its exact keyboard receiver, the
+physical pointer, onscreen window order and Space-change count. Discord remained
+onscreen and background. Sampling cannot exclude changes between observations.
+CUA independently observed all seven sent messages and an empty composer.
 
-## Test interruption and remaining validation
+The setup condition matters: during explicitly permitted unattended diagnostics,
+Discord was unhidden/activated once, then an existing Finder window was focused.
+That foreground setup is **outside** this background acceptance claim. Normal
+background sessions never perform it automatically. Restoring a hidden target or
+working across another fullscreen Space remains unresolved; the earlier hidden
+post-unlock pilot failed. Therefore this result does not meet a universal
+background-computer-use requirement or prove superiority to another product.
 
-The follow-up fixture opened a foreground window and setup focused Discord. This
-obstructed the user's active work and is **not** acceptable background behavior.
-After the user reported the obstruction, live UI tests stopped, fixture processes
-were terminated, and Discord was hidden with a confirmed background native result.
-The default contract forbids repeating that setup while the user is working.
-A later explicit unattended interval authorized scoped live diagnostics again;
-it did not change the product's default or turn foreground setup into background proof.
+### Remaining editor-focus cause and repair
 
-Six recorded exploratory attempts are preserved in
-`benchmarks/batch-state-diff/background-pilots-2026-10-15`. They use different
-experimental binaries and are not a controlled before/after cohort. They are all
-failures; none is discarded or retried into a success count. Seven later pilot records are retained in
-`benchmarks/batch-state-diff/background-resumed-2026-10-15`, including two verified
-sends and the locked-session failure. They are not pooled. The requested final
-five-before/five-after background comparison remains outstanding after the Mac
-locked and CUA required manual unlock.
+The published pre-repair fork navigated successfully in the same condition but
+refused typing because application AXFocusedUIElement returned noValue. The
+composer advertised AXPress and accepted the click without becoming the native
+keyboard receiver. A CUA click on the exact composer alone established a real
+AXTextArea receiver while Finder remained foreground; no text input was needed.
 
-Future live acceptance must measure foreground preservation, window order and
-visibility, physical pointer interference, and independent verification of the
-exact recipient and sent message, in addition to elapsed time. Native inspection
-must prove the selected target without creating a foreground test window or
-moving the user's workspace. UI tests require an agreed test session; safe unit
-checks and source work can continue without interacting with the desktop.
+ActionInputDriver now prefers writable AXFocused for enabled text-entry controls,
+even if AXPress is advertised, when accessibility-value delivery is permitted.
+Positional resolution likewise admits focus instead of selecting that editor's
+press route. Policy opt-out retains AXPress. Existing exact-owner/generation/window
+validation remains in force. A failed focus setter is not followed by blind press
+or global activation. The fixed pilot's click reported accessibility_value and its
+literal typing reported window_targeted_events with confirmed change. This is a
+focus change inside Discord, not a change of the user's foreground receiver.
+
+### Retained failures and monitor correction
+
+The first post-repair ten-attempt cohort verified 2/5 baseline and 5/5 fork sends,
+but its strict all-window-order criterion failed every trial. All-window inventory
+included hidden system windows. An additional diagnostic identified additions and
+removals belonging to Apple's CursorUIViewService; they were offscreen, while the
+visible order remained constant. The original records and harness remain intact
+in `background-controlled-2026-10-15` and `background-all-window-harness`.
+
+Monitor schema 2 separately measures onscreen window order and retains all-window
+inventory changes for diagnosis. It still rejects foreground, keyboard receiver,
+pointer, visible order, target-visibility and Space changes or missing evidence.
+A **new** full ten-attempt cohort used that monitor. No old trial was reclassified
+or silently retried into the new cohort's success rate. Unit regressions cover
+hidden-window churn versus visible reordering and missing schema-2 evidence.
+
+Earlier six failed pilots, seven resumed pilots, and four new unlocked diagnostic
+pilots are preserved separately under `benchmarks/batch-state-diff/`; different
+builds and prerequisites are not pooled. Earlier foreground results are a different
+workload. Previously obstructive fixture processes were removed; after this
+cohort Discord was hidden again and the original ChatGPT/Codex app restored.
+No lock/security preferences were changed.
 
 ## Agent prompt and measurement contract
 

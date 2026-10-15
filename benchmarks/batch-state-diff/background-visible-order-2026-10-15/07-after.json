@@ -1,0 +1,28 @@
+{
+  "mode": "batch",
+  "elapsed_ms": 11299.127792,
+  "mcp_calls": 1,
+  "driver_steps": 11,
+  "verifications": 5,
+  "success": true,
+  "initial_state": "server",
+  "recipient": "たぬき",
+  "text": "Peekaboo bcbaeaf9 B07",
+  "background_only": true,
+  "llm_included": false,
+  "composer_empty": true,
+  "workspace_monitor": {
+    "samples": 127,
+    "preserved": true,
+    "changed_fields": [],
+    "target_remained_background": true,
+    "includes_preparation": true,
+    "window_order_scope": "onscreen windows; all-window churn retained for diagnosis",
+    "sampling_limit": "Transient changes between samples may be missed"
+  },
+  "trial": 7,
+  "version": "after",
+  "exit_code": 0,
+  "trial_started_at_unix_seconds": 1792062474.6032588,
+  "trial_finished_at_unix_seconds": 1792062489.502091
+}

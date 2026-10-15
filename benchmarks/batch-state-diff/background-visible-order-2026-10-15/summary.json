@@ -1,0 +1,29 @@
+{
+  "before": {
+    "successes": 2,
+    "attempts": 5,
+    "success_rate": 0.4,
+    "successful_elapsed_ms": [
+      16486.892542,
+      15755.405083
+    ],
+    "median_ms": 16121.1488125,
+    "min_ms": 15755.405083,
+    "max_ms": 16486.892542
+  },
+  "after": {
+    "successes": 5,
+    "attempts": 5,
+    "success_rate": 1.0,
+    "successful_elapsed_ms": [
+      11116.59525,
+      11003.896416,
+      10940.996792,
+      11299.127792,
+      13213.858625
+    ],
+    "median_ms": 11116.59525,
+    "min_ms": 10940.996792,
+    "max_ms": 13213.858625
+  }
+}

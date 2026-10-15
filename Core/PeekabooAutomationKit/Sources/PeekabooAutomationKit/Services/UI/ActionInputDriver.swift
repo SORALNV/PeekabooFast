@@ -180,6 +180,16 @@ struct ActionInputDriver: ActionInputDriving {
         allowAccessibilityValueFallback: Bool,
         beforeMutation: @MainActor () throws -> Void) async throws -> UIInputExecutionResult.Action
     {
+        // A web editor may advertise AXPress without assigning its native keyboard receiver.
+        // Focus text-entry controls directly; retain normal press semantics when value delivery is disabled.
+        if allowAccessibilityValueFallback, element.isEnabled,
+           Self.prefersFocusForClick(
+               role: element.role,
+               subrole: element.subrole,
+               isFocusedSettable: element.isFocusedSettable)
+        {
+            return try await self.focusForClick(element, beforeMutation: beforeMutation)
+        }
         do {
             return try self.performAction(AXActionNames.kAXPressAction, on: element, beforeMutation: beforeMutation)
         } catch let error as ActionInputError
@@ -479,6 +489,14 @@ struct ActionInputDriver: ActionInputDriving {
 
     nonisolated static func shouldContinueTryingScrollAction(after error: ActionInputError) -> Bool {
         error.isUnsupported
+    }
+
+    nonisolated static func prefersFocusForClick(
+        role: String?, subrole: String?, isFocusedSettable: Bool) -> Bool
+    {
+        guard isFocusedSettable else { return false }
+        // Combo boxes retain their press action because clicking may open a popup.
+        return ["AXTextField", "AXTextArea"].contains(role ?? "") || subrole == "AXSearchField"
     }
 
     nonisolated static func canFocusForClick(

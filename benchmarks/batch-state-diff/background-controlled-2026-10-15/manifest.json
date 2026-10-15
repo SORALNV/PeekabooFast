@@ -1,0 +1,46 @@
+{
+  "run_tag": "1d2214d7",
+  "host": {
+    "architecture": "arm64",
+    "macos_version": "26.6.2"
+  },
+  "harness_sha256": {
+    "discord.py": "9755868a793ef2f89aef7c6568ab99e9d6a08d9e5c75e2c9d1695e6e8ab550c0",
+    "transport.py": "81b4de036a60ad88d47abd930599db0a758a1dd879ad31b116cbef33132d48c7",
+    "repeat-discord.py": "ce6e1d4c9466307a928095c13b24b72976821d13c06c66c012f1c1696f0b0528"
+  },
+  "plan": "11 background driver steps, five explicit verifications",
+  "background_only": true,
+  "require_preserved_workspace": true,
+  "monitor_sha256": "d19d74c8ec7fa561c785cf76197898c85f058a52627fd6a19131576f46774ef5",
+  "order": [
+    "before",
+    "after",
+    "after",
+    "before",
+    "before",
+    "after",
+    "after",
+    "before",
+    "before",
+    "after"
+  ],
+  "trials_per_version": 5,
+  "warmup_sends": 0,
+  "pid": 24935,
+  "window": 144370,
+  "server": "自作erの集い",
+  "recipient": "たぬき",
+  "startup_and_server_preparation_excluded": true,
+  "llm_included": false,
+  "binaries": {
+    "before": {
+      "path": "/private/tmp/peekaboo-baseline",
+      "sha256": "95c61d71d4e4b6a898c1addaab3bfdef083e2e2e8ac95d3c98e9fd161dac6ab9"
+    },
+    "after": {
+      "path": "/private/tmp/peekaboofast-editor-focus",
+      "sha256": "ddfe3a683486f9cabde19f3416160907cea5fe9f82589956833364ca970cf721"
+    }
+  }
+}
