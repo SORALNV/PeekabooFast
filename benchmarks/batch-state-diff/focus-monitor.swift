@@ -7,6 +7,13 @@ import Foundation
 @_silgen_name("_AXUIElementGetWindow")
 func nativeWindowID(_ element: AXUIElement, _ window: UnsafeMutablePointer<CGWindowID>) -> AXError
 
+@_silgen_name("_CGSDefaultConnection")
+func monitorConnection() -> UInt32
+@_silgen_name("CGSCopyManagedDisplaySpaces")
+func monitorDisplays(_ connection: UInt32) -> CFArray
+@_silgen_name("CGSCopySpacesForWindows")
+func monitorWindowSpaces(_ connection: UInt32, _ mask: Int, _ windows: CFArray) -> CFArray?
+
 let args = Array(CommandLine.arguments.dropFirst())
 guard args.count >= 2, let targetPID = Int32(args[0]), let targetWindowID = Int(args[1]) else {
     fatalError("Usage: focus-monitor PID WINDOW_ID [SAMPLES]")
@@ -85,14 +92,42 @@ for _ in 0..<samples {
             "layer": info[kCGWindowLayer as String] as? Int ?? 0,
         ]
     }
+    let connection = monitorConnection()
+    let displayInfo = monitorDisplays(connection) as? [[String: Any]] ?? []
+    let activeSpaceIDs = displayInfo.compactMap {
+        ($0["Current Space"] as? [String: Any])?["ManagedSpaceID"] as? UInt64
+    }.sorted()
+    let targetSpaceIDs = (monitorWindowSpaces(connection, 7, [targetWindowID] as CFArray) as? [UInt64] ?? []).sorted()
+    let targetOnActiveSpace: Any = activeSpaceIDs.isEmpty || targetSpaceIDs.isEmpty
+        ? NSNull() : !Set(activeSpaceIDs).isDisjoint(with: targetSpaceIDs)
+    let targetApp = NSRunningApplication(processIdentifier: targetPID)
+    let lockedSession = CGSessionCopyCurrentDictionary() as? [String: Any]
+    let locked: Any = lockedSession.map { $0["CGSSessionScreenIsLocked"] as? Bool ?? false } ?? NSNull()
+    let geometry = visibleNonTargetWindows.map { info -> [String: Any] in
+        [
+            "pid": info[kCGWindowOwnerPID as String] as? Int ?? 0,
+            "id": info[kCGWindowNumber as String] as? Int ?? 0,
+            "bounds": info[kCGWindowBounds as String] as? [String: Any] ?? [:],
+        ]
+    }
+    let geometryData = try JSONSerialization.data(withJSONObject: geometry, options: [.sortedKeys])
+    let geometryDigest = SHA256.hash(data: geometryData).map { String(format: "%02x", $0) }.joined()
     let bounds = window?[kCGWindowBounds as String] as? [String: Any] ?? [:]
     let pointer = CGEvent(source: nil)?.location ?? .zero
     var sample: [String: Any] = [
-        "monitor_schema": 2,
+        "monitor_schema": 3,
         "time": Date().timeIntervalSince1970,
         "ax_front_pid": focusedPID,
         "front_pid": NSWorkspace.shared.frontmostApplication?.processIdentifier ?? 0,
         "target_present": window != nil,
+        "target_hidden": targetApp.map { $0.isHidden as Any } ?? NSNull(),
+        "target_space_ids": targetSpaceIDs.map(String.init).joined(separator: ","),
+        "active_space_ids": activeSpaceIDs.map(String.init).joined(separator: ","),
+        "target_on_active_space": targetOnActiveSpace,
+        "session_locked": locked,
+        "visible_non_target_geometry_sha256": geometryDigest,
+        "target_x": bounds["X"] as? Double ?? 0,
+        "target_y": bounds["Y"] as? Double ?? 0,
         "target_onscreen": window?[kCGWindowIsOnscreen as String] as? Bool ?? false,
         "target_width": bounds["Width"] as? Double ?? 0,
         "target_height": bounds["Height"] as? Double ?? 0,

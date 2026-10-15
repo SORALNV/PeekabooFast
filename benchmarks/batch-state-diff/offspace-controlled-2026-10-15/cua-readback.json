@@ -1,0 +1,15 @@
+{
+  "source": "Independent CUA native AX readback after the complete cohort",
+  "run_tag": "4ca6836c",
+  "sent_messages": [
+    "Peekaboo 4ca6836c B02",
+    "Peekaboo 4ca6836c B03",
+    "Peekaboo 4ca6836c B06",
+    "Peekaboo 4ca6836c B07",
+    "Peekaboo 4ca6836c B10"
+  ],
+  "sent_count": 5,
+  "recipient": "たぬき",
+  "composer_empty": true,
+  "raw_private_history_published": false
+}

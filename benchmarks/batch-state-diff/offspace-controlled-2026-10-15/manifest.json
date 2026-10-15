@@ -1,0 +1,51 @@
+{
+  "run_tag": "4ca6836c",
+  "host": {
+    "architecture": "arm64",
+    "macos_version": "26.6.2"
+  },
+  "harness_sha256": {
+    "discord.py": "9755868a793ef2f89aef7c6568ab99e9d6a08d9e5c75e2c9d1695e6e8ab550c0",
+    "transport.py": "81b4de036a60ad88d47abd930599db0a758a1dd879ad31b116cbef33132d48c7",
+    "repeat-discord.py": "a0e4349e6e29a49dfa779401104646fd2debaae57a22aa8f3423508c95f5233e"
+  },
+  "plan": "11 background driver steps, five explicit verifications",
+  "background_only": true,
+  "expected_target_state": "offspace",
+  "modes": {
+    "before": "batch",
+    "after": "batch"
+  },
+  "require_preserved_workspace": true,
+  "monitor_sha256": "a40e442b37a35f381ff80a0be9be892670053ac549636c260f3fcf9684126350",
+  "order": [
+    "before",
+    "after",
+    "after",
+    "before",
+    "before",
+    "after",
+    "after",
+    "before",
+    "before",
+    "after"
+  ],
+  "trials_per_version": 5,
+  "warmup_sends": 0,
+  "pid": 24935,
+  "window": 144370,
+  "server": "自作erの集い",
+  "recipient": "たぬき",
+  "startup_and_server_preparation_excluded": true,
+  "llm_included": false,
+  "binaries": {
+    "before": {
+      "path": "/private/tmp/peekaboofast-qualified",
+      "sha256": "370803883f2e40f6a1bdca360477a0cbbe7cad0be4f0d1b50f63612b2985249c"
+    },
+    "after": {
+      "path": "/private/tmp/peekaboofast-hidden-qualified-final",
+      "sha256": "c048acf8416ed8a27050a5c5199c4d122a97d7838546a91da41884dcf400c76d"
+    }
+  }
+}

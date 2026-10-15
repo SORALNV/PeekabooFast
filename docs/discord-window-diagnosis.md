@@ -158,9 +158,9 @@ receiver during typing and stopped without blind retry. CUA independently read
 back all seven sent messages and an empty composer. See the benchmark README for
 raw trials, binary hashes, monitor changes and small-sample limits.
 
-This validates an already-onscreen target behind Finder on the same regular
-Space. A hidden/off-Space pilot still failed to verify navigation, so that scope
-remains unresolved. It must not be repaired by stealing focus during normal user
+That cohort validated an already-onscreen target behind Finder on the same regular
+Space. At that revision, a hidden/off-Space pilot still failed to verify navigation;
+the later hidden/off-Space qualification below supersedes that limitation. It must not be repaired by stealing focus during normal user
 work. The Electron AXManualAccessibility request was common preparation for both
 versions; AXEnhancedUserInterface remained disabled. No private Discord contents
 are retained in the diagnostic artifacts.
@@ -175,3 +175,52 @@ swiftc -swift-version 6 benchmarks/batch-state-diff/window-diagnostic.swift -o /
 The diagnostic reports window identities and visibility/minimization flags, not
 message histories. The live sending benchmark is separate and requires explicit
 recipient/text arguments; see `benchmarks/batch-state-diff/discord.py`.
+
+## Hidden/off-Space follow-up: distinct causes and repairs
+
+The later hidden reproduction showed that accepted AX navigation changed the native
+window title while leaving the serialized web AX tree on the previous page. CUA observed
+the same stale body. A read-only AX hit test on the exact owner-checked AXWebArea caused a
+renderer round trip and refreshed the tree while the app stayed hidden. An application-root
+hit test returned the menu bar and did not solve this. The hit result is discarded and
+never grants input authority; later fresh observations must still prove completion.
+Mutation readback performs the same bounded ancestor refresh. Its initial 16-ancestor
+pilot cap missed Discord's 17-deep composer; the final walk is deadline-bounded, cycle-
+checked and capped at 128.
+
+Electron 42.9.0 is the version embedded in the tested Discord build. Its
+[application AX implementation](https://github.com/electron/electron/blob/v42.9.0/shell/browser/mac/electron_application.mm)
+debounces AXManualAccessibility writes for two seconds, cancelling the prior callback on
+each write. Polling that setter on every verification sample can postpone activation.
+The backend now deduplicates requests by process generation in a bounded, 30-second
+cooldown ledger. This caches attempts, not successful accessibility or target authority.
+Electron's getter also compares exact accessibility mode flags, so a false readback is
+not proof that its setter was ignored. The renderer refresh diagnosis is supported by
+causal before/after native and CUA observations; no app activation or app flags were used.
+
+A hidden composer could report AXFocused=true while application AXFocusedUIElement was
+absent. Per-character full-window scans then occasionally exceeded 200ms. An operation
+now retains its proven receiver and re-reads its owner, window, identity and focus before
+every delivery, including two metadata/focus reads around retained validation. It never
+substitutes a new receiver after stale validation. Process-generation, bounds, sheet,
+cancellation and secure-value checks remain in force. Hosts without explicit window-number
+routing retain the older discovery requirement.
+
+Hidden keys also needed the target NSWindow number: a native NSEvent diagnostic exposed
+CGEvent field 51. Per-PID keyboard events now carry that exact window ID, including Unicode,
+modifier down/up and cleanup events, with a private event source. There is no global-event
+fallback. Native/CUA drafts proved delivery before any Return was attempted.
+
+Finally, hidden Discord ignored Cmd+A even when text and Delete reached the composer.
+AXSelectedTextRange did select the complete unchanged draft. Action-first exact web clear
+now selects the range natively, verifies it and unchanged UTF-16 text, revalidates the
+receiver, then sends Delete to the same window. It does not write a fake web AXValue or
+report an unsupported route after a selection was dispatched. Composite delivery receipts
+retain the selection and keyboard units.
+
+The final fixed binary completed 5/5 hidden and 5/5 off-Space sends, versus 0/5 each for
+the preceding fork binary, using batch mode on both sides. Median successful durations
+were 12.115s and 9.848s. All 2,319 samples across the twenty attempts preserved the
+workspace. See [the current qualification](background-execution.md#current-discord-status-hidden-and-off-space-sends-verified)
+for scope, preparation, raw records, failed pilots and sampling limits. Standard Discord
+was restored to its original hidden state; no lock/security preferences changed.

@@ -1,0 +1,9 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "PeekabooFast hidden 05",
+  "phase": "timed_workload",
+  "error": "{'is_error': True, 'tool': 'type', 'meta': {'dispatch_state': 'none', 'retry_safe': True, 'evidence': 'request_refused', 'escalation': 'refresh_target', 'requires_fresh_observation': False, 'effect': 'refused', 'retry_safety': 'safe', 'state': 'refused', 'mutation_dispatched': False}, 'message': 'The Accessibility text receiver no longer matches the exact target; observe it again.', 'verification': None}",
+  "elapsed_ms": 8138.599
+}

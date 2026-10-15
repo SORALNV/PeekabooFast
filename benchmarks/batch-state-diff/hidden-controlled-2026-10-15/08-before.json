@@ -1,0 +1,23 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "Peekaboo 39d974c9 A08",
+  "phase": "preparation",
+  "error": "{'is_error': False, 'tool': None, 'meta': {}, 'message': 'Verification unsatisfied after 23 sample(s) in 10.001s.\\nApplication: Discord (PID 24935)\\nWindow: 144370 \"#twitter | 自作erの集い - Discord\"\\nPredicates:\\n1. element_exists: unsatisfied — label=自作erの集い、サーバー操作, role=AXButton; observed count=0', 'verification': None}",
+  "workspace_monitor": {
+    "samples": 103,
+    "preserved": true,
+    "changed_fields": [],
+    "target_remained_background": true,
+    "includes_preparation": true,
+    "expected_target_state": "hidden",
+    "window_order_scope": "onscreen windows; all-window churn retained for diagnosis",
+    "sampling_limit": "Transient changes between samples may be missed"
+  },
+  "trial": 8,
+  "version": "before",
+  "exit_code": 1,
+  "trial_started_at_unix_seconds": 1792072456.4723608,
+  "trial_finished_at_unix_seconds": 1792072468.5113542
+}

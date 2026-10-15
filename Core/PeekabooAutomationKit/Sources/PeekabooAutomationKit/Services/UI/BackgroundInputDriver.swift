@@ -296,20 +296,22 @@ enum BackgroundInputDriver {
         return outcome
     }
 
-    static func typeCharacter(_ character: Character, targetProcessIdentifier: pid_t) throws {
+    static func typeCharacter(_ character: Character, targetProcessIdentifier: pid_t, windowID: Int? = nil) throws {
         try self.validateTarget(targetProcessIdentifier)
-        try self.postUnicodeCharacter(character, targetProcessIdentifier: targetProcessIdentifier)
+        try self.postUnicodeCharacter(character, targetProcessIdentifier: targetProcessIdentifier, windowID: windowID)
     }
 
     static func tapKey(
         keyCode: CGKeyCode,
         modifiers: CGEventFlags = [],
-        targetProcessIdentifier: pid_t) throws
+        targetProcessIdentifier: pid_t,
+        windowID: Int? = nil) throws
     {
         try self.validateTarget(targetProcessIdentifier)
         try self.postKeyboardStroke(
             (keyCode: keyCode, flags: modifiers),
-            targetProcessIdentifier: targetProcessIdentifier)
+            targetProcessIdentifier: targetProcessIdentifier,
+            windowID: windowID)
     }
 
     static func postEvent(_ event: CGEvent, to pid: pid_t) {
@@ -333,7 +335,8 @@ enum BackgroundInputDriver {
             validatedReceiver: validatedReceiver,
             access: self.focusedTextEditAccess(
                 targetProcessIdentifier: targetProcessIdentifier,
-                exactWindow: exactWindow))
+                exactWindow: exactWindow,
+                validatedReceiver: validatedReceiver))
     }
 
     @discardableResult
@@ -353,7 +356,8 @@ enum BackgroundInputDriver {
             validatedReceiver: validatedReceiver,
             access: self.focusedTextEditAccess(
                 targetProcessIdentifier: targetProcessIdentifier,
-                exactWindow: exactWindow))
+                exactWindow: exactWindow,
+                validatedReceiver: validatedReceiver))
     }
 
     private static func post(_ event: CGEvent, to pid: pid_t) {
@@ -374,161 +378,6 @@ enum BackgroundInputDriver {
         guard targetProcessIdentifier > 0, self.isProcessAlive(targetProcessIdentifier) else {
             throw PeekabooError.invalidInput("Target process identifier is not running: \(targetProcessIdentifier)")
         }
-    }
-
-    private static func postKeyboardStroke(
-        _ stroke: (keyCode: CGKeyCode, flags: CGEventFlags),
-        targetProcessIdentifier: pid_t) throws
-    {
-        let plan = try self.keyboardEventPlan(
-            keyCode: stroke.keyCode,
-            flags: stroke.flags,
-            targetProcessIdentifier: targetProcessIdentifier)
-
-        for event in plan.modifierKeyDownEvents {
-            self.post(event, to: targetProcessIdentifier)
-            usleep(1000)
-        }
-
-        self.post(plan.primaryKeyDownEvent, to: targetProcessIdentifier)
-        usleep(1000)
-        self.post(plan.primaryKeyUpEvent, to: targetProcessIdentifier)
-
-        for event in plan.modifierKeyUpEvents {
-            usleep(1000)
-            self.post(event, to: targetProcessIdentifier)
-        }
-    }
-
-    static func keyboardEventPlan(
-        keyCode: CGKeyCode,
-        flags: CGEventFlags,
-        targetProcessIdentifier: pid_t) throws -> KeyboardEventPlan
-    {
-        let source = CGEventSource(stateID: .hidSystemState)
-        let modifiers = self.modifierKeys(for: flags)
-        var activeFlags: CGEventFlags = []
-
-        let modifierDownEvents = try modifiers.map { modifier in
-            activeFlags.insert(modifier.flag)
-            return try self.makeKeyboardEvent(
-                keyCode: modifier.keyCode,
-                keyDown: true,
-                flags: activeFlags,
-                source: source,
-                targetProcessIdentifier: targetProcessIdentifier)
-        }
-
-        let primaryKeyDownEvent = try self.makeKeyboardEvent(
-            keyCode: keyCode,
-            keyDown: true,
-            flags: flags,
-            source: source,
-            targetProcessIdentifier: targetProcessIdentifier)
-        let primaryKeyUpEvent = try self.makeKeyboardEvent(
-            keyCode: keyCode,
-            keyDown: false,
-            flags: flags,
-            source: source,
-            targetProcessIdentifier: targetProcessIdentifier)
-
-        let modifierUpEvents = try modifiers.reversed().map { modifier in
-            activeFlags.remove(modifier.flag)
-            return try self.makeKeyboardEvent(
-                keyCode: modifier.keyCode,
-                keyDown: false,
-                flags: activeFlags,
-                source: source,
-                targetProcessIdentifier: targetProcessIdentifier)
-        }
-
-        return KeyboardEventPlan(
-            modifierKeyDownEvents: modifierDownEvents,
-            primaryKeyDownEvent: primaryKeyDownEvent,
-            primaryKeyUpEvent: primaryKeyUpEvent,
-            modifierKeyUpEvents: modifierUpEvents)
-    }
-
-    private static func makeKeyboardEvent(
-        keyCode: CGKeyCode,
-        keyDown: Bool,
-        flags: CGEventFlags,
-        source: CGEventSource?,
-        targetProcessIdentifier: pid_t) throws -> CGEvent
-    {
-        guard let event = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: keyDown) else {
-            throw PeekabooError.operationError(message: "Failed to create background keyboard events")
-        }
-
-        event.flags = flags
-        self.stampKeyboardRoutingFields(on: event, targetProcessIdentifier: targetProcessIdentifier)
-        return event
-    }
-
-    private static func modifierKeys(for flags: CGEventFlags) -> [(keyCode: CGKeyCode, flag: CGEventFlags)] {
-        var modifiers: [(keyCode: CGKeyCode, flag: CGEventFlags)] = []
-
-        if flags.contains(.maskCommand) {
-            modifiers.append((keyCode: 0x37, flag: .maskCommand))
-        }
-        if flags.contains(.maskShift) {
-            modifiers.append((keyCode: 0x38, flag: .maskShift))
-        }
-        if flags.contains(.maskAlternate) {
-            modifiers.append((keyCode: 0x3A, flag: .maskAlternate))
-        }
-        if flags.contains(.maskControl) {
-            modifiers.append((keyCode: 0x3B, flag: .maskControl))
-        }
-        if flags.contains(.maskSecondaryFn) {
-            modifiers.append((keyCode: 0x3F, flag: .maskSecondaryFn))
-        }
-
-        return modifiers
-    }
-
-    private static func postUnicodeCharacter(_ character: Character, targetProcessIdentifier: pid_t) throws {
-        let events = try self.unicodeKeyboardEvents(
-            for: character,
-            targetProcessIdentifier: targetProcessIdentifier)
-        self.post(events.keyDown, to: targetProcessIdentifier)
-        usleep(1000)
-        self.post(events.keyUp, to: targetProcessIdentifier)
-    }
-
-    static func unicodeKeyboardEvents(
-        for character: Character,
-        targetProcessIdentifier: pid_t,
-        makeEvent: (CGEventSource?, Bool) -> CGEvent? = {
-            CGEvent(keyboardEventSource: $0, virtualKey: 0, keyDown: $1)
-        }) throws -> (keyDown: CGEvent, keyUp: CGEvent)
-    {
-        let string = String(character)
-        let source = CGEventSource(stateID: .hidSystemState)
-
-        guard let keyDown = makeEvent(source, true),
-              let keyUp = makeEvent(source, false)
-        else {
-            throw PeekabooError.operationError(message: "Failed to create background unicode keyboard events")
-        }
-
-        let chars = Array(string.utf16)
-        chars.withUnsafeBufferPointer { buffer in
-            keyDown.keyboardSetUnicodeString(stringLength: chars.count, unicodeString: buffer.baseAddress!)
-            keyUp.keyboardSetUnicodeString(stringLength: chars.count, unicodeString: buffer.baseAddress!)
-        }
-
-        // Literal text must not inherit held user modifiers and become a shortcut.
-        keyDown.flags = []
-        keyUp.flags = []
-
-        self.stampKeyboardRoutingFields(on: keyDown, targetProcessIdentifier: targetProcessIdentifier)
-        self.stampKeyboardRoutingFields(on: keyUp, targetProcessIdentifier: targetProcessIdentifier)
-        return (keyDown, keyUp)
-    }
-
-    static func stampKeyboardRoutingFields(on event: CGEvent, targetProcessIdentifier: pid_t) {
-        event.setIntegerValueField(.eventTargetUnixProcessID, value: Int64(targetProcessIdentifier))
     }
 
     static func textByReplacingSelection(
@@ -931,6 +780,59 @@ enum BackgroundInputDriver {
 
 extension BackgroundInputDriver {
     @MainActor
+    static func selectAllExactWebText(
+        targetProcessIdentifier: pid_t,
+        exactWindow: UIAutomationTarget.ExactWindow,
+        validatedReceiver: Element) async throws -> FocusedTextKeyDispatch
+    {
+        guard exactWindow.focusedElement != nil else { return .unsupported }
+        let access = self.focusedTextEditAccess(
+            targetProcessIdentifier: targetProcessIdentifier,
+            exactWindow: exactWindow,
+            validatedReceiver: validatedReceiver)
+        guard let element = try access.focusedElement() else { return .unsupported }
+        guard let snapshot = access.focusSnapshot(element),
+              DetachedExactWindowFocusReader.allowsValueRead(snapshot)
+        else { return .unsupported }
+        let route = TextInputRoute.resolve(
+            focusedElement: element,
+            application: AXUIElementCreateApplication(targetProcessIdentifier),
+            targetProcessIdentifier: targetProcessIdentifier,
+            validateExactReceiver: { _ in
+                guard let current = try? access.focusedElement() else { return false }
+                return CFEqual(current, element)
+            })
+        guard route == .webKeyboard else {
+            _ = try route.permitsAccessibilityEditing()
+            return .unsupported
+        }
+        let before = try access.state(of: element)
+        guard let text = before.text else { return .unsupported }
+        let range = CFRange(
+            location: 0, length: text.utf16.count)
+        let dispatched = try await access.selectRange(range, element, before)
+        guard dispatched != .unsupported else { return .unsupported }
+        // A confirmed selection must not silently select a concurrently changed draft.
+        do {
+            guard let current = try access.focusedElement(), CFEqual(current, element) else {
+                throw FocusedElementReceiptError.focusNotConfirmed
+            }
+            let after = try access.state(of: element)
+            guard self.exactTextMatches(after.text, before.text), after.selection?.location == 0,
+                  after.selection?.length == range.length
+            else { throw FocusedElementReceiptError.focusNotConfirmed }
+        } catch {
+            guard dispatched != .noChange else { throw error }
+            throw DesktopActionFailure.indeterminate(
+                delivery: .init(mechanism: .accessibilityValue, mode: .background),
+                evidence: .completionUnknown,
+                unitCount: .one,
+                message: "The draft or selection changed during select-all; observe before deleting text.")
+        }
+        return dispatched
+    }
+
+    @MainActor
     private static func setSelectedTextRangeAndObserve(
         _ range: CFRange,
         on element: AXUIElement,
@@ -1049,10 +951,26 @@ extension BackgroundInputDriver {
         }
     }
 
+    /// Hidden apps may omit application-wide AXFocusedUIElement. An operation-scoped receiver
+    /// remains usable only after fresh process, window, identity and AXFocused checks.
+    static func resolveTextReceiver<Receiver>(
+        retained: Receiver?,
+        hasExactElementReceipt: Bool,
+        validate: (Receiver) throws -> Void,
+        readFocused: () throws -> Receiver?) throws -> Receiver?
+    {
+        if hasExactElementReceipt, let retained {
+            try validate(retained)
+            return retained
+        }
+        return try readFocused()
+    }
+
     @MainActor
     private static func focusedTextEditAccess(
         targetProcessIdentifier: pid_t,
-        exactWindow: UIAutomationTarget.ExactWindow?) -> FocusedTextEditAccess<AXUIElement>
+        exactWindow: UIAutomationTarget.ExactWindow?,
+        validatedReceiver: Element?) -> FocusedTextEditAccess<AXUIElement>
     {
         let expectedGeneration = exactWindow?.identity.ownerProcessStartIdentity ??
             SystemIdentityResolver.processStartIdentity(targetProcessIdentifier)
@@ -1089,13 +1007,26 @@ extension BackgroundInputDriver {
             }
         }
         return FocusedTextEditAccess(
-            focusedElement: { try self.focusedTextElement(targetProcessIdentifier: targetProcessIdentifier) },
+            focusedElement: { try self.resolveTextReceiver(
+                retained: validatedReceiver?.underlyingElement,
+                hasExactElementReceipt: exactWindow?.focusedElement != nil,
+                validate: validateReceiver,
+                readFocused: { try self.focusedTextElement(targetProcessIdentifier: targetProcessIdentifier) }) },
             sameReceiver: { CFEqual($0, $1) },
             isEditable: { element in
                 guard !self.isSecureTextElement(element), self.isValueSettable(element) else { return false }
                 return try self.permitsAccessibilityTextEditing(
                     element,
-                    targetProcessIdentifier: targetProcessIdentifier)
+                    targetProcessIdentifier: targetProcessIdentifier,
+                    validateExactReceiver: exactWindow?.focusedElement != nil && validatedReceiver != nil
+                        ? { _ in
+                            do {
+                                try validateReceiver(element)
+                                return true
+                            } catch {
+                                return false
+                            }
+                        } : nil)
             },
             textValue: { try self.textValue(from: $0) },
             selectedRange: { self.selectedTextRange(from: $0) },
@@ -1113,13 +1044,15 @@ extension BackgroundInputDriver {
 
     private static func permitsAccessibilityTextEditing(
         _ element: AXUIElement,
-        targetProcessIdentifier: pid_t) throws -> Bool
+        targetProcessIdentifier: pid_t,
+        validateExactReceiver: ((Float) -> Bool)? = nil) throws -> Bool
     {
         // Ownership validation precedes this route gate; never retry accepted web AX writes as events.
         try TextInputRoute.resolve(
             focusedElement: element,
             application: AXUIElementCreateApplication(targetProcessIdentifier),
-            targetProcessIdentifier: targetProcessIdentifier).permitsAccessibilityEditing()
+            targetProcessIdentifier: targetProcessIdentifier,
+            validateExactReceiver: validateExactReceiver).permitsAccessibilityEditing()
     }
 
     @MainActor
@@ -1328,7 +1261,8 @@ extension BackgroundInputDriver {
             validatedReceiver: validatedReceiver,
             access: self.focusedTextEditAccess(
                 targetProcessIdentifier: targetProcessIdentifier,
-                exactWindow: exactWindow))
+                exactWindow: exactWindow,
+                validatedReceiver: validatedReceiver))
     }
 
     @MainActor

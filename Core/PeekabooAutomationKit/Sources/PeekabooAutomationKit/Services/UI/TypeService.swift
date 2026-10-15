@@ -232,7 +232,7 @@ public final class TypeService {
         self.targetedSpecialKeyTyper = targetedSpecialKeyTyper
         var targetedInputDriver = targetedInputDriver
         if let targetedKeyTapper {
-            targetedInputDriver.tapKey = targetedKeyTapper
+            targetedInputDriver.tapKey = { code, flags, pid, _ in try targetedKeyTapper(code, flags, pid) }
         }
         if let targetedTextReplacer {
             targetedInputDriver.replaceText = targetedTextReplacer
@@ -921,6 +921,9 @@ extension TypeService {
             ? DesktopActionOutcome.Delivery(mechanism: .globalEvents, mode: .foreground)
             : DesktopActionOutcome.Delivery(mechanism: .processTargetedEvents, mode: .background))
 
+        var selectionUnits = 1
+        var selectionKeys = 1
+        var selectionDelivery: DesktopActionOutcome.Delivery? = fallbackDelivery
         if let targetProcessIdentifier {
             do {
                 switch try await self.targetedInputDriver.clearUsingAccessibility(
@@ -951,10 +954,28 @@ extension TypeService {
             }
 
             do {
-                try self.targetedInputDriver.tapKeyboardKey(
-                    0x00,
-                    flags: .maskCommand,
-                    processIdentifier: targetProcessIdentifier)
+                var selection: FocusedTextKeyDispatch = .unsupported
+                if targetedStrategy == .actionFirst, let exactWindow,
+                   let receiver = validatedReceiverProvider()
+                {
+                    selection = try await self.targetedInputDriver.selectAllWebText(
+                        targetProcessIdentifier, exactWindow, receiver)
+                }
+                switch selection {
+                case .accessibilityValue:
+                    selectionKeys = 0
+                    selectionDelivery = .init(mechanism: .accessibilityValue, mode: .background)
+                case .noChange:
+                    selectionUnits = 0
+                    selectionKeys = 0
+                    selectionDelivery = nil
+                case .unsupported:
+                    try self.targetedInputDriver.tapKeyboardKey(
+                        0x00,
+                        flags: .maskCommand,
+                        processIdentifier: targetProcessIdentifier,
+                        windowID: exactWindow?.identity.windowID)
+                }
             } catch let cancellation as CancellationError {
                 throw cancellation
             } catch {
@@ -976,7 +997,7 @@ extension TypeService {
         } catch {
             throw Self.indeterminateDeliveryError(
                 from: error,
-                emittedUnitCount: priorEmittedUnitCount + 1,
+                emittedUnitCount: priorEmittedUnitCount + selectionUnits,
                 delivery: fallbackDelivery)
         }
 
@@ -984,11 +1005,11 @@ extension TypeService {
             try await self.validateDelivery(
                 deliveryValidator,
                 continuationValidator: continuationValidator,
-                emittedUnitCount: priorEmittedUnitCount + 1)
+                emittedUnitCount: priorEmittedUnitCount + selectionUnits)
         } catch {
             throw Self.indeterminateDeliveryError(
                 from: error,
-                emittedUnitCount: priorEmittedUnitCount + 1,
+                emittedUnitCount: priorEmittedUnitCount + selectionUnits,
                 delivery: fallbackDelivery)
         }
         if let targetProcessIdentifier {
@@ -996,11 +1017,12 @@ extension TypeService {
                 try self.targetedInputDriver.tapKeyboardKey(
                     TypeServiceSpecialKeyMapping.keyCode(for: .delete),
                     flags: [],
-                    processIdentifier: targetProcessIdentifier)
+                    processIdentifier: targetProcessIdentifier,
+                    windowID: exactWindow?.identity.windowID)
             } catch {
                 throw Self.indeterminateDeliveryError(
                     from: error,
-                    emittedUnitCount: priorEmittedUnitCount + 1,
+                    emittedUnitCount: priorEmittedUnitCount + selectionUnits,
                     delivery: fallbackDelivery)
             }
         } else {
@@ -1009,7 +1031,7 @@ extension TypeService {
             } catch {
                 throw Self.indeterminateDeliveryError(
                     from: error,
-                    emittedUnitCount: priorEmittedUnitCount + 1,
+                    emittedUnitCount: priorEmittedUnitCount + selectionUnits,
                     delivery: fallbackDelivery)
             }
         }
@@ -1018,13 +1040,13 @@ extension TypeService {
         } catch {
             throw Self.indeterminateDeliveryError(
                 from: error,
-                emittedUnitCount: priorEmittedUnitCount + 2,
+                emittedUnitCount: priorEmittedUnitCount + selectionUnits + 1,
                 delivery: fallbackDelivery)
         }
         return TypeActionDispatchSummary.dispatched(
-            delivery: fallbackDelivery,
-            keyPressCount: 2,
-            unitCount: 2,
+            delivery: Self.combinedDelivery(selectionDelivery, fallbackDelivery, mode: .background) ?? fallbackDelivery,
+            keyPressCount: selectionKeys + 1,
+            unitCount: selectionUnits + 1,
             fallbackReason: targetProcessIdentifier != nil && targetedStrategy == .actionFirst
                 ? .attributeUnsupported : nil)
     }
@@ -1509,7 +1531,10 @@ extension TypeService {
         processIdentifier: pid_t,
         processStartIdentity: UInt64,
         timeout: Duration,
-        operation: @escaping @Sendable () -> Result<ExactWindowFocusSnapshot, FocusedElementReceiptError>) async
+        operation: @escaping @Sendable () -> Result<
+            ExactWindowFocusSnapshot,
+            FocusedElementReceiptError,
+        >) async
         -> Result<ExactWindowFocusSnapshot, FocusedElementReceiptError>?
     {
         try? await ElementDetectionTimeoutRunner.runDetached(

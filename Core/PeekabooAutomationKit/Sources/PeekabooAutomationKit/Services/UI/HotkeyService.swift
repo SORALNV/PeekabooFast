@@ -327,9 +327,12 @@ public final class HotkeyService {
                             exactWindow, preparationOwnershipValidator)))
                     }
                     let outcome = try await self.performTargetedHotkey(
-                        parsedKeys: parsedKeys, plannedChord: plannedChord, holdDuration: holdDuration,
+                        parsedKeys: parsedKeys,
+                        plannedChord: plannedChord,
+                        holdDuration: holdDuration,
                         holdNanoseconds: holdNanoseconds,
-                        automationTarget: automationTarget, targetValidator: targetValidator)
+                        automationTarget: automationTarget,
+                        targetValidator: targetValidator)
                     guard prepareBackgroundWindow else { return outcome }
                     preparation.record(.outcome(outcome))
                     guard let result = preparation.successResolution().outcome else {
@@ -383,7 +386,8 @@ public final class HotkeyService {
             holdNanoseconds: holdNanoseconds,
             targetProcessIdentifier: targetProcessIdentifier,
             deliveryValidator: targetValidator,
-            cleanupProcessIdentity: automationTarget.exactWindow?.identity.processIdentity)
+            cleanupProcessIdentity: automationTarget.exactWindow?.identity.processIdentity,
+            targetWindowID: automationTarget.exactWindow?.identity.windowID)
 
         do {
             if holdDuration <= 0 {
@@ -458,7 +462,8 @@ public final class HotkeyService {
         holdNanoseconds: UInt64,
         targetProcessIdentifier: pid_t,
         deliveryValidator: (@MainActor @Sendable () async throws -> Void)? = nil,
-        cleanupProcessIdentity: ApplicationProcessIdentity? = nil) async throws
+        cleanupProcessIdentity: ApplicationProcessIdentity? = nil,
+        targetWindowID: Int? = nil) async throws
         -> Int
     {
         guard self.postEventAccessEvaluator() else {
@@ -468,7 +473,8 @@ public final class HotkeyService {
         let eventPlan = try BackgroundInputDriver.keyboardEventPlan(
             keyCode: plan.keyCode,
             flags: plan.modifierFlags,
-            targetProcessIdentifier: targetProcessIdentifier)
+            targetProcessIdentifier: targetProcessIdentifier,
+            windowID: targetWindowID)
 
         if let cleanupProcessIdentity {
             return try await self.postHeldHotkey(

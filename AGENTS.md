@@ -5,6 +5,7 @@
 - Do not open or focus a test fixture, raise/unhide Discord, or switch Spaces to make a background trial pass while the user is working. Preparation effects count as interference even when excluded from speed timings.
 - A user's explicit unattended testing interval allows its scoped diagnostic UI work for that interval only. It does not change the product's default background behavior or turn foreground diagnostics into background success evidence. Stop interfering UI work when the user returns or reports obstruction.
 - Use read-only native monitoring and exact-target verification. Record failed trials, foreground changes, and occlusion honestly; do not retry failed trials into a success rate or claim an AX draft value proves delivery.
+- For hidden/off-Space Discord, use this fork's local backend (`mcp --no-remote`) and fresh exact-window observations. A missing application-wide AXFocusedUIElement alone is not loss of the editor's validated AXFocused receiver. Never unhide, activate, move windows or switch Spaces to recover a trial. Web editor text must use verified keyboard delivery; an AXValue write alone is not real typing or sending. Older companions do not inherit the new window-number routing capability.
 - Remove your temporary test UI/processes after testing and keep private UI histories outside the repository. Continue source work and safe automated tests when live UI interaction is unavailable.
 
 ## Start Here

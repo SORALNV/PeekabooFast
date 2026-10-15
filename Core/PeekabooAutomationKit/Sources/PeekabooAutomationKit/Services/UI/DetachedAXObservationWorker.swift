@@ -258,6 +258,8 @@ enum DetachedAXObservationWorker {
             // This is not window activation: never set AXEnhancedUserInterface or AXFocused here.
             try ElectronAccessibilityBootstrap.request(
                 isElectron: true,
+                process: (
+                    identifier: request.processIdentifier, generation: request.expectedProcessStartIdentity),
                 deadline: deadline,
                 validateIdentity: { try validateIdentity(request) },
                 setManualAccessibility: {
@@ -317,7 +319,11 @@ enum DetachedAXObservationWorker {
                 depth: 0,
                 deadline: deadline,
                 budget: request.traversalBudget,
-                source: nil),
+                source: nil,
+                webRefresh: request.requestsManualAccessibility && !isApplicationScopedFallback
+                    ? WebRefreshContext(
+                        window: window, processIdentifier: request.processIdentifier, bounds: bounds)
+                    : nil),
             state: &state)
 
         if request.includeMenuBarElements, request.appIsActive,
@@ -572,6 +578,8 @@ enum DetachedAXObservationWorker {
             break
         }
         guard let descriptor = descriptorRead.descriptor else { return }
+        self.refreshWebRead(
+            element: element, descriptor: descriptor, request: request, state: &state)
         let normalizedRole = descriptor.role.lowercased()
         let baseType = self.elementType(role: normalizedRole, isEditable: descriptor.isEditable)
         let elementTypeInput = ElementTypeAdjustmentInput(
@@ -653,6 +661,34 @@ enum DetachedAXObservationWorker {
         self.processChildren(of: element, request: request, state: &state)
     }
 
+    private static func refreshWebRead(
+        element: AXUIElement,
+        descriptor: Descriptor,
+        request: TraversalRequest,
+        state: inout TraversalState)
+    {
+        if !state.requestedWebRefresh, let context = request.webRefresh {
+            state.requestedWebRefresh = ElectronAXReadRefresh.request(
+                role: descriptor.role,
+                bounds: (window: context.bounds ?? .zero, element: descriptor.frame),
+                deadline: request.deadline,
+                ownsExactWindow: {
+                    self.focusedElement(
+                        element,
+                        belongsTo: context.window,
+                        processIdentifier: context.processIdentifier,
+                        deadline: request.deadline)
+                }, hitTest: { point in
+                    guard let timeout = self.remainingMessagingTimeout(until: request.deadline),
+                          AXUIElementSetMessagingTimeout(element, timeout) == .success,
+                          ContinuousClock.now < request.deadline
+                    else { return }
+                    var ignoredHit: AXUIElement?
+                    _ = AXUIElementCopyElementAtPosition(element, Float(point.x), Float(point.y), &ignoredHit)
+                })
+        }
+    }
+
     private static func processChildren(
         of element: AXUIElement,
         request: TraversalRequest,
@@ -672,7 +708,8 @@ enum DetachedAXObservationWorker {
                     depth: request.depth + 1,
                     deadline: request.deadline,
                     budget: request.budget,
-                    source: request.source),
+                    source: request.source,
+                    webRefresh: request.webRefresh),
                 state: &state)
             let stopReason = self.postChildStopReason(
                 elementCount: state.elements.count,
@@ -1104,6 +1141,13 @@ private struct TraversalRequest {
     let deadline: ContinuousClock.Instant
     let budget: AXTraversalBudget
     let source: String?
+    var webRefresh: WebRefreshContext?
+}
+
+private struct WebRefreshContext {
+    let window: AXUIElement
+    let processIdentifier: pid_t
+    let bounds: CGRect?
 }
 
 private struct Descriptor {
@@ -1161,6 +1205,7 @@ private struct AXAttributeReadResult {
 }
 
 private struct TraversalState {
+    var requestedWebRefresh = false
     var elements: [DetectedElement] = []
     var visited: [AXUIElement] = []
     var focusedReferences: [String: AXUIElement] = [:]

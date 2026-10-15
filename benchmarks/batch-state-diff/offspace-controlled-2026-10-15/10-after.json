@@ -1,0 +1,29 @@
+{
+  "mode": "batch",
+  "elapsed_ms": 9847.690375,
+  "mcp_calls": 1,
+  "driver_steps": 11,
+  "verifications": 5,
+  "success": true,
+  "initial_state": "server",
+  "recipient": "たぬき",
+  "text": "Peekaboo 4ca6836c B10",
+  "background_only": true,
+  "llm_included": false,
+  "composer_empty": true,
+  "workspace_monitor": {
+    "samples": 112,
+    "preserved": true,
+    "changed_fields": [],
+    "target_remained_background": true,
+    "includes_preparation": true,
+    "expected_target_state": "offspace",
+    "window_order_scope": "onscreen windows; all-window churn retained for diagnosis",
+    "sampling_limit": "Transient changes between samples may be missed"
+  },
+  "trial": 10,
+  "version": "after",
+  "exit_code": 0,
+  "trial_started_at_unix_seconds": 1792072712.145843,
+  "trial_finished_at_unix_seconds": 1792072725.320343
+}

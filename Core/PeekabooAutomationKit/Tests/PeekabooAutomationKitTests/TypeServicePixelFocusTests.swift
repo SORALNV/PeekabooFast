@@ -419,8 +419,8 @@ struct TypeServicePixelFocusTests {
                     Issue.record("No replacement requested")
                     return .unsupported
                 },
-                typeCharacter: { _, _ in eventCount += 1 },
-                tapKey: { _, _, _ in eventCount += 1 }),
+                typeCharacter: { _, _, _ in eventCount += 1 },
+                tapKey: { _, _, _, _ in eventCount += 1 }),
             targetBundleIdentifier: { _ in nil },
             desktopOperationExecutor: executor)
         do {
@@ -509,8 +509,8 @@ struct TypeServicePixelFocusTests {
                     #expect(payload == .clear && text.isEmpty)
                     return noChange(pid, window, phase, validatedReceiver)
                 },
-                typeCharacter: { _, _ in eventCount += 1 },
-                tapKey: { _, _, _ in eventCount += 1 }),
+                typeCharacter: { _, _, _ in eventCount += 1 },
+                tapKey: { _, _, _, _ in eventCount += 1 }),
             targetBundleIdentifier: { _ in nil },
             desktopOperationExecutor: executor,
             operationFinalizer: { finalizerCount += 1 })

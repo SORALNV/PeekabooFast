@@ -42,14 +42,15 @@ enum TextInputRoute: Equatable {
     static func resolve(
         focusedElement: AXUIElement,
         application: AXUIElement,
-        targetProcessIdentifier: pid_t) -> Self
+        targetProcessIdentifier: pid_t,
+        validateExactReceiver: ((Float) -> Bool)? = nil) -> Self
     {
         self.resolve(
             from: focusedElement,
             targetProcessIdentifier: targetProcessIdentifier,
             readNode: self.readNode,
             sameElement: { CFEqual($0, $1) },
-            validateReceiver: { timeout in
+            validateReceiver: validateExactReceiver ?? { timeout in
                 self.isCurrentFocusedReceiver(focusedElement, application: application, timeout: timeout)
             })
     }

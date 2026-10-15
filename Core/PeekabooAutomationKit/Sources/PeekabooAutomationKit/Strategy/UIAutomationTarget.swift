@@ -246,6 +246,15 @@ public enum UIAutomationTarget: Sendable, Equatable {
         using automation: any UIAutomationServiceProtocol) async throws -> UIAutomationTarget
     {
         guard let exactWindow = self.exactWindow else { return self }
+        if exactWindow.focusedElement != nil,
+           let routed = automation as? any ExactWindowTargetedKeyboardServiceProtocol,
+           routed.supportsWindowNumberKeyboardRouting
+        {
+            // Keep the capture-owned editor receipt. The exact-window runtime revalidates its
+            // owner, generation, frame and AXFocused state before every dispatch. Hidden windows
+            // can own a focused editor while the application's AXFocusedUIElement is absent.
+            return self
+        }
         guard let focusedElementService = automation as? any TargetedFocusedElementServiceProtocol else {
             throw PeekabooError.invalidInput(
                 field: "target",

@@ -1,0 +1,9 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "PeekabooFast hidden 08",
+  "phase": "timed_workload",
+  "error": "{'is_error': True, 'tool': 'type', 'meta': {'mutation_dispatched': True, 'delivery_mechanism': 'window_targeted_events', 'delivery_mode': 'background', 'escalation': 'observe_before_retry', 'dispatch_state': 'dispatched', 'target_receipt': {'process_start_identity_decimal': '1790525405392460', 'pid': 24935, 'process_start_identity': 1790525405392460, 'window_id': 144370}, 'evidence': 'delivery_accepted', 'requires_fresh_observation': True, 'state': 'dispatched_unverified', 'dispatched_unit_count': 24, 'effect': 'unverifiable', 'retry_safety': 'unsafe', 'retry_safe': False}, 'message': 'Typing did not return an accepted outcome. Follow the canonical escalation metadata before deciding whether to retry.', 'verification': 'Verification unknown after 20 sample(s) in 10.002s.\\nApplication: Discord (PID 24935)\\nReason: Verification deadline has insufficient time for a fresh accessibility traversal\\nPredicates:\\n1. element_value: unknown — Verification deadline has insufficient time for a fresh accessibility traversal'}",
+  "elapsed_ms": 18834.494042
+}

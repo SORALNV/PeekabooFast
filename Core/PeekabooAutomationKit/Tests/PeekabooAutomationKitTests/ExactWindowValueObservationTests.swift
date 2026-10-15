@@ -89,6 +89,62 @@ struct ExactWindowValueObservationTests {
         }
     }
 
+    @Test(arguments: [KeyboardFocusValidationPhase.initial, .continuation], Change.allCases)
+    func `retained keyboard authority is checked twice without application focus or value reads`(
+        phase: KeyboardFocusValidationPhase, change: Change) throws
+    {
+        let receiver = RetainedFocusElement(element: AXUIElementCreateApplication(4242))
+        let replacement = RetainedFocusElement(element: AXUIElementCreateApplication(4243))
+        let expected = FocusedElementIdentity(
+            processIdentifier: 4242, windowID: 42, role: "AXTextField", identifier: "editor", frame: CGRect(
+                x: 20,
+                y: 30,
+                width: 160,
+                height: 24))
+        var reads = 0
+        var focusReads = 0
+        let result = DetachedExactWindowFocusReader.readRetained(
+            expected: expected,
+            phase: phase,
+            readSnapshot: {
+                reads += 1
+                if reads == 1 {
+                    return Self.snapshot(expected: expected, receiver: receiver)
+                }
+                guard change != .missing else { return nil }
+                return ExactWindowFocusSnapshot(
+                    processIdentifier: expected.processIdentifier,
+                    windowID: change == .window ? 43 : expected.windowID,
+                    frame: change == .reflow ? expected.frame.offsetBy(
+                        dx: 10,
+                        dy: 20) : expected.frame, role: change == .role ? "AXButton" : expected.role,
+                    subrole: change == .secure ? "AXSecureTextField" : nil,
+                    subroleIsReadable: change != .secureMetadataUnreadable,
+                    identifier: change == .identifier ? "sibling" : expected.identifier,
+                    nativeElement: change == .replacement ? replacement : receiver)
+            }, readFocusedState: {
+                focusReads += 1
+                if focusReads == 1 {
+                    return true
+                }
+                if change == .focusLost {
+                    return false
+                }
+                return change == .focusUnreadable ? nil : true
+            })
+        let allowed = [Change.stable, .secure, .secureMetadataUnreadable].contains(change) ||
+            (change == .reflow && phase == .continuation)
+        if allowed {
+            let snapshot = try result.get()
+            #expect(snapshot.nativeElement == receiver)
+            #expect(snapshot.value == nil)
+            #expect(focusReads == 2)
+        } else if case .success = result {
+            Issue.record("Receiver drift must stop keyboard delivery")
+        }
+        #expect(reads == 2)
+    }
+
     @Test
     func `unreadable initial secure metadata never queries the value`() throws {
         let receiver = RetainedFocusElement(element: AXUIElementCreateApplication(4242))

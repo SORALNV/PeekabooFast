@@ -1,5 +1,5 @@
 ---
-summary: 'PeekabooFast background execution contract, current implementation, and unresolved Discord limits.'
+summary: 'PeekabooFast background execution contract, implementation, hidden/off-Space Discord qualification, and limits.'
 read_when:
   - 'Running automation while the user works in another application'
   - 'Interpreting Discord background test results'
@@ -42,7 +42,54 @@ it, even if the automation target itself never activates.
   replay after uncertain AXPress failure. It is not a claimed fix for every
   Discord row: some observed rows expose neither writable selection nor AXPress.
 
-## Discord status: same-Space background verified, hidden/off-Space unresolved
+## Current Discord status: hidden and off-Space sends verified
+
+The final input backend was frozen as SHA-256
+`c048acf8416ed8a27050a5c5199c4d122a97d7838546a91da41884dcf400c76d`.
+In both cohorts, the target window belonged to a Space disjoint from every active
+display Space; the hidden cohort additionally kept the application hidden throughout.
+Both versions used the same batch-mode workload and exact process/window: reset to the
+named server, open the DM tab, select たぬき, focus the composer, clear, type unique text,
+press Return, then verify the sent text and empty composer. No foreground authority,
+fixture window, desktop pointer event, window move or Space switch was used.
+
+| Condition | Previous fork (`1c1316f0`, `37080388` binary) | Repaired backend |
+| --- | ---: | ---: |
+| Hidden app: verified send and preserved workspace | 0/5 | 5/5 |
+| Hidden: successful-run median | — | 12.115 s |
+| Unhidden window on another Space: verified send and preserved workspace | 0/5 | 5/5 |
+| Off-Space: successful-run median | — | 9.848 s |
+
+All 20 trials preserved the workspace in 2,319 schema-3 monitor samples, including
+preparation and final readback. Checks cover the foreground application/native receiver,
+physical pointer, visible window order and geometry, target bounds/visibility, active
+Spaces on every display, target Space membership and unlocked session. Sampling can miss
+transient changes between samples. CUA independently found all ten repaired-version
+messages and empty composers. Baseline failures remain in the denominator, including
+server-preparation failures; there is no baseline successful latency or speedup ratio.
+Startup/server preparation is excluded only from the timed workload, never from screen
+preservation. LLM latency is excluded. Five attempts per condition on this host do not
+establish universal reliability.
+
+Off-Space setup unhid only the already-running target after proving that its Spaces
+were disjoint from all active display Spaces. The current Space, foreground app, pointer,
+receiver and visible windows stayed unchanged. The first setup attempt refused without
+mutation because the all-window catalog omitted its offscreen flag; a second helper
+used the explicit onscreen-only catalog instead. Both attempts and the monitored cleanup
+are retained. Discord was hidden again without activation or a Space change.
+
+Records: [`hidden-controlled-2026-10-15`](../benchmarks/batch-state-diff/hidden-controlled-2026-10-15),
+[`offspace-controlled-2026-10-15`](../benchmarks/batch-state-diff/offspace-controlled-2026-10-15).
+The local backend reports window-number routing explicitly; legacy/remote providers
+retain a false default rather than inheriting support from an older keyboard capability.
+The tested server command is `peekaboo mcp --no-remote`; use this fork's built executable,
+not an older installed companion. This qualification covers AX-accessible Discord navigation
+and keyboard delivery. Hidden
+ScreenCaptureKit windows can remain suspended, and arbitrary app/pixel workflows are not
+certified by these results.
+
+## Historical same-Space background comparison
+
 
 After the user unlocked the Mac, a controlled ten-attempt cohort ran without
 foreground authority. Each trial reset to the same server through a background
@@ -72,10 +119,10 @@ CUA independently observed all seven sent messages and an empty composer.
 The setup condition matters: during explicitly permitted unattended diagnostics,
 Discord was unhidden/activated once, then an existing Finder window was focused.
 That foreground setup is **outside** this background acceptance claim. Normal
-background sessions never perform it automatically. Restoring a hidden target or
-working across another fullscreen Space remains unresolved; the earlier hidden
-post-unlock pilot failed. Therefore this result does not meet a universal
-background-computer-use requirement or prove superiority to another product.
+background sessions never perform it automatically. At that earlier revision,
+hidden/off-Space operation remained unresolved. The later qualification above supersedes
+that limitation for the tested Discord AX workflow; neither cohort proves a universal
+background-computer-use requirement or superiority to another product.
 
 ### Remaining editor-focus cause and repair
 

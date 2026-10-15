@@ -77,6 +77,7 @@ extension UIAutomationService {
         expectedWindowIdentity: WindowMutationIdentity,
         expectedWindowBounds: CGRect,
         expectedFocusedElement: FocusedElementIdentity? = nil,
+        retainedElement: RetainedFocusElement? = nil,
         phase: KeyboardFocusValidationPhase = .initial) async throws -> ExactWindowFocusSnapshot
     {
         let identityValidator = self.exactWindowIdentityValidator
@@ -86,12 +87,21 @@ extension UIAutomationService {
         do {
             if let expectedFocusedElement {
                 let reader = phase == .initial ? self.exactFocusedElementReader : self.continuationFocusedElementReader
+                let deadline = ContinuousClock.now.advanced(by: .milliseconds(200))
                 let result = try await ElementDetectionTimeoutRunner.runDetached(
                     targetProcessIdentifier: targetProcessIdentifier,
                     targetProcessStartIdentity: expectedWindowIdentity.ownerProcessStartIdentity,
                     seconds: 0.2)
                 {
-                    reader(expectedFocusedElement)
+                    if let retainedElement {
+                        DetachedExactWindowFocusReader.readRetained(
+                            expected: expectedFocusedElement,
+                            retained: retainedElement,
+                            phase: phase,
+                            deadline: deadline)
+                    } else {
+                        reader(expectedFocusedElement)
+                    }
                 }
                 switch result {
                 case let .success(value):

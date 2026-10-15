@@ -1,0 +1,9 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "PeekabooFast hidden 02",
+  "phase": "timed_workload",
+  "error": "{'is_error': True, 'tool': 'click', 'meta': {'state': 'indeterminate', 'dispatch_state': 'may_have_dispatched', 'requires_fresh_observation': True, 'dispatched_unit_count': 1, 'effect': 'unverifiable', 'escalation': 'observe_before_retry', 'delivery_mechanism': 'accessibility_value', 'retry_safety': 'unsafe', 'retry_safe': False, 'delivery_mode': 'background', 'mutation_dispatched': True, 'evidence': 'completion_unknown'}, 'message': 'The selected element did not report AXFocused=true. Observe the exact field before deciding whether to retry focus.', 'verification': None}",
+  "elapsed_ms": 6288.723042
+}

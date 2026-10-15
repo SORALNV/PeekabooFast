@@ -5,6 +5,13 @@ import PeekabooFoundation
 /// Primitive operations stay separate so a policy cannot cross into its forbidden mutation path.
 @MainActor
 struct TargetedTypeInputDriver {
+    var selectAllWebText: (
+        pid_t, UIAutomationTarget.ExactWindow, Element) async throws
+        -> FocusedTextKeyDispatch = { pid, exact, receiver in
+            try await BackgroundInputDriver.selectAllExactWebText(
+                targetProcessIdentifier: pid, exactWindow: exact, validatedReceiver: receiver)
+        }
+
     var insertText: (
         String,
         pid_t,
@@ -49,12 +56,16 @@ struct TargetedTypeInputDriver {
                 validatedReceiver: validatedReceiver)
         }
 
-    var typeCharacter: (Character, pid_t) throws -> Void = { character, pid in
-        try BackgroundInputDriver.typeCharacter(character, targetProcessIdentifier: pid)
+    var typeCharacter: (Character, pid_t, Int?) throws -> Void = { character, pid, windowID in
+        try BackgroundInputDriver.typeCharacter(character, targetProcessIdentifier: pid, windowID: windowID)
     }
 
-    var tapKey: (CGKeyCode, CGEventFlags, pid_t) throws -> Void = { code, flags, pid in
-        try BackgroundInputDriver.tapKey(keyCode: code, modifiers: flags, targetProcessIdentifier: pid)
+    var tapKey: (CGKeyCode, CGEventFlags, pid_t, Int?) throws -> Void = { code, flags, pid, windowID in
+        try BackgroundInputDriver.tapKey(
+            keyCode: code,
+            modifiers: flags,
+            targetProcessIdentifier: pid,
+            windowID: windowID)
     }
 
     func character(
@@ -72,7 +83,7 @@ struct TargetedTypeInputDriver {
             action: {
                 try await self.insertText(String(character), processIdentifier, exactWindow, phase, validatedReceiver)
             },
-            synthesis: { try self.typeCharacter(character, processIdentifier) })
+            synthesis: { try self.typeCharacter(character, processIdentifier, exactWindow?.identity.windowID) })
     }
 
     func specialKey(
@@ -88,7 +99,11 @@ struct TargetedTypeInputDriver {
             strategy: strategy,
             keyboardDelivery: keyboardDelivery,
             action: { try await self.performTextKey(key, processIdentifier, exactWindow, phase, validatedReceiver) },
-            synthesis: { try self.tapKey(TypeServiceSpecialKeyMapping.keyCode(for: key), [], processIdentifier) })
+            synthesis: { try self.tapKey(
+                TypeServiceSpecialKeyMapping.keyCode(for: key),
+                [],
+                processIdentifier,
+                exactWindow?.identity.windowID) })
     }
 
     func clearUsingAccessibility(
@@ -106,8 +121,8 @@ struct TargetedTypeInputDriver {
         return result
     }
 
-    func tapKeyboardKey(_ code: CGKeyCode, flags: CGEventFlags, processIdentifier: pid_t) throws {
-        try Self.performEvent { try self.tapKey(code, flags, processIdentifier) }
+    func tapKeyboardKey(_ code: CGKeyCode, flags: CGEventFlags, processIdentifier: pid_t, windowID: Int? = nil) throws {
+        try Self.performEvent { try self.tapKey(code, flags, processIdentifier, windowID) }
     }
 
     private func dispatch(

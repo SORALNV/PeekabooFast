@@ -1,0 +1,9 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "PeekabooFast hidden 01",
+  "phase": "timed_workload",
+  "error": "{'is_error': True, 'tool': 'click', 'meta': {'retry_safe': False, 'delivery_mode': 'background', 'retry_safety': 'unsafe', 'mutation_dispatched': True, 'escalation': 'observe_before_retry', 'target_receipt': {'process_start_identity_decimal': '1790525405392460', 'pid': 24935, 'process_start_identity': 1790525405392460, 'window_id': 144370}, 'effect': 'unverifiable', 'requires_fresh_observation': True, 'evidence': 'delivery_accepted', 'delivery_mechanism': 'accessibility_action', 'target_identity': {'process_start_identity_decimal': '1790525405392460', 'window_id': 144370, 'kind': 'window', 'pid': 24935}, 'dispatch_state': 'dispatched', 'state': 'dispatched_unverified', 'dispatched_unit_count': 1}, 'message': 'Click did not return a confirmed outcome. Follow the canonical escalation metadata before deciding whether to retry.', 'verification': 'Verification unsatisfied after 31 sample(s) in 10.000s.\\nApplication: Discord (PID 24935)\\nWindow: 144370 \"@たぬき - Discord\"\\nPredicates:\\n1. element_exists: unsatisfied — label=フレンド, role=AXLink; observed count=0'}",
+  "elapsed_ms": 11134.742375
+}

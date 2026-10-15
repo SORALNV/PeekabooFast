@@ -1,0 +1,9 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "PeekabooFast hidden 06",
+  "phase": "timed_workload",
+  "error": "{'is_error': True, 'tool': 'type', 'meta': {'state': 'refused', 'retry_safety': 'safe', 'mutation_dispatched': False, 'requires_fresh_observation': False, 'dispatch_state': 'none', 'escalation': 'refresh_target', 'effect': 'refused', 'evidence': 'request_refused', 'retry_safe': True}, 'message': \"Text input could not prove the focused control's delivery route. Observe the exact target again before retrying; no input was sent by this unit.\", 'verification': None}",
+  "elapsed_ms": 8099.17775
+}

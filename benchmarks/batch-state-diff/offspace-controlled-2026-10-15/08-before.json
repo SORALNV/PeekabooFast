@@ -1,0 +1,23 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "Peekaboo 4ca6836c A08",
+  "phase": "preparation",
+  "error": "{'is_error': False, 'tool': None, 'meta': {}, 'message': 'Verification unknown after 32 sample(s) in 10.002s.\\nApplication: Discord (PID 24935)\\nReason: Verification deadline has insufficient time for a fresh accessibility traversal\\nPredicates:\\n1. element_exists: unknown — Verification deadline has insufficient time for a fresh accessibility traversal', 'verification': None}",
+  "workspace_monitor": {
+    "samples": 101,
+    "preserved": true,
+    "changed_fields": [],
+    "target_remained_background": true,
+    "includes_preparation": true,
+    "expected_target_state": "offspace",
+    "window_order_scope": "onscreen windows; all-window churn retained for diagnosis",
+    "sampling_limit": "Transient changes between samples may be missed"
+  },
+  "trial": 8,
+  "version": "before",
+  "exit_code": 1,
+  "trial_started_at_unix_seconds": 1792072686.646541,
+  "trial_finished_at_unix_seconds": 1792072698.475616
+}

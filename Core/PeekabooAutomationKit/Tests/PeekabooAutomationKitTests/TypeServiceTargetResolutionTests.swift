@@ -9,6 +9,35 @@ import Testing
 
 struct TypeServiceTargetResolutionTests {
     @Test
+    func `every exact window key event including modifier cleanup carries its window number`() throws {
+        let windowField = try #require(CGEventField(rawValue: 51))
+        let unicode = try BackgroundInputDriver.unicodeKeyboardEvents(
+            for: "😀", targetProcessIdentifier: 4242, windowID: 5678)
+        let chord = try BackgroundInputDriver.keyboardEventPlan(
+            keyCode: 0, flags: [.maskCommand, .maskShift], targetProcessIdentifier: 4242, windowID: 5678)
+        let events = [unicode.keyDown, unicode.keyUp, chord.primaryKeyDownEvent, chord.primaryKeyUpEvent] +
+            chord.modifierKeyDownEvents + chord.modifierKeyUpEvents
+        for event in events {
+            #expect(event.getIntegerValueField(windowField) == 5678)
+            #expect(event.getIntegerValueField(.eventTargetUnixProcessID) == 4242)
+        }
+        #expect(Self.unicodeString(from: unicode.keyDown) == "😀")
+        #expect(unicode.keyDown.flags.isEmpty)
+    }
+
+    @Test(arguments: [0, -1, Int(UInt32.max) + 1])
+    func `invalid exact window numbers cannot produce an input plan`(_ windowID: Int) {
+        #expect(throws: (any Error).self) {
+            try BackgroundInputDriver.keyboardEventPlan(
+                keyCode: 0, flags: .maskCommand, targetProcessIdentifier: 4242, windowID: windowID)
+        }
+        #expect(throws: (any Error).self) {
+            try BackgroundInputDriver.unicodeKeyboardEvents(
+                for: "x", targetProcessIdentifier: 4242, windowID: windowID)
+        }
+    }
+
+    @Test
     func `legacy type result decodes without special key event count`() throws {
         let data = Data(#"{"totalCharacters":1,"keyPresses":1}"#.utf8)
         let result = try JSONDecoder().decode(TypeResult.self, from: data)
@@ -661,7 +690,10 @@ struct TypeServiceTargetResolutionTests {
         let detectionResult = ElementDetectionResult(
             snapshotId: "snapshot",
             screenshotPath: "/tmp/shot.png",
-            elements: DetectedElements(textFields: [basic, number]),
+            elements: DetectedElements(textFields: [
+                basic,
+                number,
+            ]),
             metadata: DetectionMetadata(detectionTime: 0.01, elementCount: 2, method: "test"))
 
         #expect(TypeService.resolveTargetElement(query: "basic-text-field", in: detectionResult)?.id == "T1")
@@ -717,7 +749,10 @@ struct TypeServiceTargetResolutionTests {
         let detectionResult = ElementDetectionResult(
             snapshotId: "snapshot",
             screenshotPath: "/tmp/shot.png",
-            elements: DetectedElements(textFields: [higher, lower]),
+            elements: DetectedElements(textFields: [
+                higher,
+                lower,
+            ]),
             metadata: DetectionMetadata(detectionTime: 0.01, elementCount: 2, method: "test"))
 
         #expect(TypeService.resolveTargetElement(query: "basic-text-field", in: detectionResult)?.id == "T_LOW")

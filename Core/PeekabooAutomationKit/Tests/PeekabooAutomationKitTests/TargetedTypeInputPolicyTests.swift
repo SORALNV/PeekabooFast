@@ -194,7 +194,7 @@ struct TargetedTypeInputPolicyTests {
     @Test
     func `event admission cancellation never interrupts a keyboard pair already entered`() async throws {
         var events: [String] = []
-        let driver = TargetedTypeInputDriver(tapKey: { _, _, _ in
+        let driver = TargetedTypeInputDriver(tapKey: { _, _, _, _ in
             events.append("down")
             withUnsafeCurrentTask { $0?.cancel() }
             events.append("up")
@@ -484,8 +484,8 @@ private final class Fixture {
                 try await self.action(
                     "clear", processIdentifier: pid, exactWindow: window, phase: phase, receiver: receiver)
             },
-            typeCharacter: { character, _ in try self.event("text:\(character)") },
-            tapKey: { code, flags, _ in try self.event("key:\(code):\(flags.rawValue)") })
+            typeCharacter: { character, _, _ in try self.event("text:\(character)") },
+            tapKey: { code, flags, _, _ in try self.event("key:\(code):\(flags.rawValue)") })
         let service = TypeService(
             inputPolicy: policy,
             randomSource: SystemTypingCadenceRandomSource(),

@@ -1,0 +1,8 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "PeekabooFast hidden 03",
+  "phase": "preparation",
+  "error": "{'is_error': True, 'tool': None, 'meta': {}, 'message': 'Failed to inspect UI: Accessibility observation is unavailable while the macOS GUI session is locked. Unlock the Mac manually before retrying; no focus or input workaround was attempted.', 'verification': None}"
+}

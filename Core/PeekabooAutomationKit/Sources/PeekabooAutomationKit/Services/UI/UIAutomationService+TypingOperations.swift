@@ -177,11 +177,13 @@ extension UIAutomationService {
     {
         let validatedReceiver = ValidatedTypingReceiver()
         let validator: @MainActor @Sendable (FocusedElementIdentity) async throws -> Void = { focusedElement in
+            let retained = validatedReceiver.element.map { RetainedFocusElement(element: $0.underlyingElement) }
             validatedReceiver.element = nil
             let snapshot = try await self.requireExactWindowKeyboardFocus(
                 expectedWindowIdentity: request.windowIdentity,
                 expectedWindowBounds: request.windowBounds,
-                expectedFocusedElement: focusedElement)
+                expectedFocusedElement: focusedElement,
+                retainedElement: retained)
             validatedReceiver.element = snapshot.nativeElement.map { Element($0.element) }
         }
         return try await self.normalizingSnapshotErrors {
@@ -189,11 +191,13 @@ extension UIAutomationService {
                 request,
                 deliveryValidator: validator,
                 continuationValidator: { focusedElement in
+                    let retained = validatedReceiver.element.map { RetainedFocusElement(element: $0.underlyingElement) }
                     validatedReceiver.element = nil
                     let snapshot = try await self.requireExactWindowKeyboardFocus(
                         expectedWindowIdentity: request.windowIdentity,
                         expectedWindowBounds: request.windowBounds,
                         expectedFocusedElement: focusedElement,
+                        retainedElement: retained,
                         phase: .continuation)
                     validatedReceiver.element = snapshot.nativeElement.map { Element($0.element) }
                 },
@@ -272,19 +276,23 @@ extension UIAutomationService {
         let automationTarget = UIAutomationTarget.exactWindow(exactWindow)
         let validatedReceiver = ValidatedTypingReceiver()
         let validator: @MainActor @Sendable () async throws -> Void = {
-            validatedReceiver.element = nil
-            let snapshot = try await self.requireExactWindowKeyboardFocus(
-                expectedWindowIdentity: target.windowIdentity,
-                expectedWindowBounds: target.windowBounds,
-                expectedFocusedElement: target.focusedElement)
-            validatedReceiver.element = snapshot.nativeElement.map { Element($0.element) }
-        }
-        let continuationValidator: @MainActor @Sendable () async throws -> Void = {
+            let retained = validatedReceiver.element.map { RetainedFocusElement(element: $0.underlyingElement) }
             validatedReceiver.element = nil
             let snapshot = try await self.requireExactWindowKeyboardFocus(
                 expectedWindowIdentity: target.windowIdentity,
                 expectedWindowBounds: target.windowBounds,
                 expectedFocusedElement: target.focusedElement,
+                retainedElement: retained)
+            validatedReceiver.element = snapshot.nativeElement.map { Element($0.element) }
+        }
+        let continuationValidator: @MainActor @Sendable () async throws -> Void = {
+            let retained = validatedReceiver.element.map { RetainedFocusElement(element: $0.underlyingElement) }
+            validatedReceiver.element = nil
+            let snapshot = try await self.requireExactWindowKeyboardFocus(
+                expectedWindowIdentity: target.windowIdentity,
+                expectedWindowBounds: target.windowBounds,
+                expectedFocusedElement: target.focusedElement,
+                retainedElement: retained,
                 phase: .continuation)
             validatedReceiver.element = snapshot.nativeElement.map { Element($0.element) }
         }

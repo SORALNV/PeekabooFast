@@ -1,0 +1,9 @@
+{
+  "success": false,
+  "samples": 8,
+  "changed_fields": [],
+  "helper_exit_code": 2,
+  "helper_output": "preconditions [4148] [5] Optional(\"com.hnc.Discord\") Optional(true) Optional(1) Optional(24935) nil\nREFUSED: Off-Space preparation prerequisites not established\n",
+  "helper_error": "",
+  "preparation": "Unhide without activation only when target belongs exclusively to nonvisible Spaces; no Space switch or window move"
+}

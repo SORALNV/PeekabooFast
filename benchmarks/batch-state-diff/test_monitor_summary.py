@@ -51,6 +51,43 @@ class MonitorAcceptanceTests(unittest.TestCase):
             sample['monitor_schema'] = 2
         self.assertFalse(module.summarize_monitor(samples, 200)['preserved'])
 
+    def nonvisible_samples(self, hidden):
+        samples = self.samples()
+        for sample in samples:
+            sample.update(monitor_schema=3, target_onscreen=False, target_hidden=hidden,
+                          target_space_ids='5', active_space_ids='4148', target_on_active_space=False,
+                          session_locked=False, visible_non_target_geometry_sha256='geometry',
+                          visible_non_target_order_sha256='visible', visible_non_target_windows_above=0,
+                          target_x=0, target_y=316, target_width=868, target_height=796)
+        return samples
+
+    def test_hidden_and_offspace_require_independent_visibility_evidence(self):
+        for state, hidden in [('hidden', True), ('offspace', False)]:
+            with self.subTest(state=state):
+                samples = self.nonvisible_samples(hidden)
+                self.assertTrue(module.summarize_monitor(samples, 200, state)['preserved'])
+                for key, value in [('target_onscreen', True), ('session_locked', True),
+                                   ('target_hidden', not hidden), ('active_space_ids', ''),
+                                   ('target_space_ids', ''), ('monitor_schema', 2)]:
+                    bad = [dict(sample, **{key: value}) for sample in samples]
+                    self.assertFalse(module.summarize_monitor(bad, 200, state)['preserved'], key)
+                for key in ['target_hidden', 'target_space_ids', 'visible_non_target_geometry_sha256']:
+                    bad = [dict(sample) for sample in samples]
+                    del bad[-1][key]
+                    self.assertFalse(module.summarize_monitor(bad, 200, state)['preserved'], key)
+        samples = self.nonvisible_samples(False)
+        for sample in samples:
+            sample['target_on_active_space'] = True
+        self.assertFalse(module.summarize_monitor(samples, 200, 'offspace')['preserved'])
+
+    def test_nonvisible_target_and_workspace_geometry_must_remain_stable(self):
+        for state, hidden in [('hidden', True), ('offspace', False)]:
+            for key, value in [('target_space_ids', '6'), ('active_space_ids', '4149'),
+                               ('target_x', 1), ('visible_non_target_geometry_sha256', 'changed')]:
+                samples = self.nonvisible_samples(hidden)
+                samples[-1][key] = value
+                self.assertFalse(module.summarize_monitor(samples, 200, state)['preserved'], key)
+
     def test_stable_complete_background_evidence_passes(self):
         self.assertTrue(module.summarize_monitor(self.samples(), 200)['preserved'])
 

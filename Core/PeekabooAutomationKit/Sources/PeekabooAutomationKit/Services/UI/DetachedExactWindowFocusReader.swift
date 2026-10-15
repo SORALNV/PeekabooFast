@@ -211,6 +211,49 @@ enum DetachedExactWindowFocusReader {
         self.read(expected: expected, phase: .continuation)
     }
 
+    /// Revalidate an operation-owned receiver without scanning a hidden app's entire AX tree
+    /// before every character. This reads fresh metadata and focus twice; it never reads AXValue.
+    static func readRetained(
+        expected: FocusedElementIdentity,
+        retained: RetainedFocusElement,
+        phase: KeyboardFocusValidationPhase,
+        deadline: ContinuousClock.Instant) -> Result<ExactWindowFocusSnapshot, FocusedElementReceiptError>
+    {
+        self.readRetained(
+            expected: expected,
+            phase: phase,
+            readSnapshot: {
+                self.read(element: retained.element, processIdentifier: expected.processIdentifier, deadline: deadline)
+            }, readFocusedState: {
+                self.focusedAttributeValue(self.attribute(
+                    kAXFocusedAttribute, of: retained.element, deadline: deadline))
+            })
+    }
+
+    static func readRetained(
+        expected: FocusedElementIdentity,
+        phase: KeyboardFocusValidationPhase,
+        readSnapshot: () -> ExactWindowFocusSnapshot?,
+        readFocusedState: () -> Bool?) -> Result<ExactWindowFocusSnapshot, FocusedElementReceiptError>
+    {
+        do {
+            guard let before = readSnapshot() else { return .failure(.processMismatch) }
+            try self.validateValueSnapshot(before, expected: expected, phase: phase)
+            guard let focused = readFocusedState() else { return .failure(.focusedAttributeUnreadable) }
+            guard focused else { return .failure(.focusNotConfirmed) }
+            guard let after = readSnapshot() else { return .failure(.processMismatch) }
+            try self.validateValueSnapshot(after, expected: expected, phase: phase)
+            guard before.nativeElement == after.nativeElement else { return .failure(.focusNotConfirmed) }
+            guard let focused = readFocusedState() else { return .failure(.focusedAttributeUnreadable) }
+            guard focused else { return .failure(.focusNotConfirmed) }
+            return .success(after)
+        } catch let error as FocusedElementReceiptError {
+            return .failure(error)
+        } catch {
+            return .failure(.focusNotConfirmed)
+        }
+    }
+
     static func readValue(
         expected: FocusedElementIdentity,
         retainedElement: RetainedFocusElement? = nil) -> Result<ExactWindowFocusSnapshot, FocusedElementReceiptError>

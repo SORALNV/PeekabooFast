@@ -5,17 +5,23 @@ CLI commands and Swift module names remain `peekaboo` / `Peekaboo` for compatibi
 
 This fork adds bounded MCP batches, explicit snapshot references between batch steps,
 AX state differences, and fixes for exact-window discovery and focus validation.
-A controlled Discord background comparison on one host achieved **2/5 → 5/5**
-successful sends, with successful-run medians **16.121 → 11.117 seconds (31.0% shorter)**.
-Discord remained onscreen behind Finder on the same Space; the native monitor found
-no foreground, receiver, pointer, visible window-order or Space changes in 1,324 samples.
-**Hidden/off-Space operation remains unresolved.** This is limited evidence, not a
-universal background reliability or ChatGPT Computer Use replacement claim.
+Controlled Discord DM tests on one host now cover both a hidden application and a window
+on another Space. Each condition achieved **0/5 → 5/5** verified sends with workspace
+preserved, comparing the preceding fork revision with the repaired backend using batch mode
+for both. Successful-run medians were **12.115 seconds hidden** and **9.848 seconds off-Space**;
+the failed baseline has no successful median or meaningful speedup ratio. A native monitor
+found no foreground, receiver, pointer, visible window-order/geometry or Space changes in
+**2,319 samples**, including server preparation. CUA independently confirmed all ten sends
+and empty composers. This qualifies this Discord/AX workflow, not arbitrary apps or hidden
+pixel capture. The earlier same-Space upstream comparison remains in the measurement history.
 See [measurements](benchmarks/batch-state-diff/README.md), [batch API](docs/batch-state-diff.md),
 [background limits](docs/background-execution.md), and the
 [external-client prompt](docs/background-client-prompt.md).
 
 Build this fork from source with `pnpm install --frozen-lockfile` and `pnpm run build:cli`.
+Use `Apps/CLI/.build/debug/peekaboo mcp --no-remote` for the qualified local backend.
+An older installed companion does not gain window-number routing from this source change;
+legacy/remote providers keep that capability disabled until explicitly supported.
 The Homebrew, npm, and release installation links below refer to the upstream project.
 
 ## Upstream Peekaboo

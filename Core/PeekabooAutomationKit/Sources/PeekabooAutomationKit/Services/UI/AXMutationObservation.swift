@@ -122,7 +122,12 @@ enum DetachedAXMutationReader {
         deadline: ContinuousClock.Instant,
         requiresFocusedReceiver: Bool = false) -> AXMutationObservationSnapshot?
     {
-        self.readSynchronously(
+        if SystemIdentityResolver.processStartIdentity(target.processIdentifier) == target.processStartIdentity,
+           let expected = target.expectedIdentity
+        {
+            ElectronAXReadRefresh.requestFromAncestor(of: element.element, expected: expected, deadline: deadline)
+        }
+        return self.readSynchronously(
             request: (target: target, attribute: attribute, deadline: deadline),
             requiresFocusedReceiver: requiresFocusedReceiver,
             processStartIdentity: { SystemIdentityResolver.processStartIdentity(target.processIdentifier) },

@@ -1,0 +1,7 @@
+{
+  "success": true,
+  "samples": 12,
+  "changed_fields": [],
+  "helper_output": "preconditions [4148] [5] Optional(\"com.hnc.Discord\") Optional(false) Optional(1) Optional(24935) nil\nfront before Optional(93250) active spaces [4148] target spaces [5]\nhide false hidden after Optional(true) remained offscreen true workspace unchanged true\n",
+  "helper_error": ""
+}

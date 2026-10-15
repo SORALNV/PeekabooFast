@@ -1,0 +1,24 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "Peekaboo 39d974c9 A09",
+  "phase": "timed_workload",
+  "error": "{'is_error': True, 'tool': 'click', 'meta': {'delivery_mode': 'background', 'escalation': 'observe_before_retry', 'effect': 'unverifiable', 'evidence': 'delivery_accepted', 'target_identity': {'window_id': 144370, 'pid': 24935, 'kind': 'window', 'process_start_identity_decimal': '1790525405392460'}, 'retry_safe': False, 'requires_fresh_observation': True, 'retry_safety': 'unsafe', 'dispatch_state': 'dispatched', 'target_receipt': {'process_start_identity_decimal': '1790525405392460', 'process_start_identity': 1790525405392460, 'pid': 24935, 'window_id': 144370}, 'delivery_mechanism': 'accessibility_action', 'state': 'dispatched_unverified', 'mutation_dispatched': True, 'dispatched_unit_count': 1}, 'message': 'Click did not return a confirmed outcome. Follow the canonical escalation metadata before deciding whether to retry.', 'verification': 'Verification unknown after 32 sample(s) in 10.002s.\\nApplication: Discord (PID 24935)\\nReason: Verification deadline has insufficient time for a fresh accessibility traversal\\nPredicates:\\n1. element_exists: unknown — Verification deadline has insufficient time for a fresh accessibility traversal'}",
+  "elapsed_ms": 11112.391917,
+  "workspace_monitor": {
+    "samples": 121,
+    "preserved": true,
+    "changed_fields": [],
+    "target_remained_background": true,
+    "includes_preparation": true,
+    "expected_target_state": "hidden",
+    "window_order_scope": "onscreen windows; all-window churn retained for diagnosis",
+    "sampling_limit": "Transient changes between samples may be missed"
+  },
+  "trial": 9,
+  "version": "before",
+  "exit_code": 1,
+  "trial_started_at_unix_seconds": 1792072468.512894,
+  "trial_finished_at_unix_seconds": 1792072482.680533
+}

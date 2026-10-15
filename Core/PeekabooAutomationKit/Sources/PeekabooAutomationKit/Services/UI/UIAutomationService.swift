@@ -63,6 +63,7 @@ public final class UIAutomationService: TargetedHotkeyServiceProtocol, TargetedT
     public let supportsStatelessClickVariants = true
     public let supportsTargetedClickAccessibilityValueDelivery = true
     public let supportsExactWindowTargetedKeyboard = true
+    public let supportsWindowNumberKeyboardRouting = true
     public let supportsClipboardGuardedExactWindowHotkeys = true
     public let supportsPreparedClipboardGuardedExactWindowHotkeys = true
     public let supportsExactWindowCompositeTypeDelivery = true

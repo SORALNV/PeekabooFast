@@ -315,20 +315,15 @@ public enum FocusedElementReceiptError: LocalizedError, Equatable, Sendable {
     }
 }
 
-/// Next step for every refusal that means "the exact target window does not hold this
-/// application's keyboard focus".
-///
-/// Background keystrokes are posted to the application, which routes them to whichever window holds
-/// its own keyboard focus — not to the window the caller named. Failing closed is therefore correct,
-/// but the caller still has a route that reaches an unfocused window: an accessibility value write.
-/// Keep this text attached to those refusals so background writing never ends in a dead end.
+/// Recovery guidance when fresh exact-window receiver validation fails.
 public enum BackgroundKeyboardFocusRemediation {
-    public static let message = "Background keystrokes follow the application's own keyboard focus " +
-        "and cannot be aimed at a window that does not hold it; such a window also refuses " +
-        "accessibility focus requests, so no amount of retrying moves focus there in the " +
-        "background. To write into this window without focusing it, observe it and set its editable " +
-        "element's accessibility value (`set-value` command, `set_value` tool). Use foreground " +
-        "delivery only when the window may take focus."
+    public static let message = "Observe the exact window again and establish focus on its editable control " +
+        "with a targeted accessibility click. Window-number keyboard routing requires host support and " +
+        "a freshly validated receiver; an absent application-wide focus reference alone does not prove " +
+        "that a hidden control lost focus. If the control cannot confirm focus, stop background input. " +
+        "Use an accessibility value write only for a control whose native editing route is supported " +
+        "(`set-value` command, `set_value` tool); " +
+        "web editors require keyboard delivery. Request foreground authority only when the window may take focus."
 }
 
 public struct ExactWindowKeyboardTarget: Sendable, Codable, Equatable {

@@ -1,6 +1,6 @@
 {
-  "background_discord_status": "same-Space onscreen target behind Finder: controlled 2/5 baseline versus 5/5 fixed; hidden/off-Space unresolved",
-  "live_ui_tests": "completed under explicit unattended permission after manual unlock; Discord hidden and original app restored afterward",
+  "background_discord_status": "Hidden and unhidden off-Space Discord AX workflows verified: preceding fork 0/5 versus repaired 5/5 per condition, all 20 workspaces preserved",
+  "live_ui_tests": "Completed after manual unlock, without foreground authority; 10 own messages independently confirmed with CUA; standard Discord restored to hidden without changing foreground or Space",
   "checks": {
     "build_cli": "passed: final qualification build exit 0",
     "batch_regression_tests": {
@@ -19,10 +19,14 @@
     "test_safe": "passed: 2391 reported Swift Testing tests plus script/Node checks; exit 0",
     "core_regressions": "13 batch + 1 verification-budget tests passed; 29 prompt tests passed",
     "kit_regressions": "31 Swift Testing + 20 XCTest tests passed; separate bootstrap/observation/classifier run: 49 passed",
-    "monitor": "Swift 6 schema-2 monitor compile passed; Python acceptance regressions 6/6 passed",
+    "monitor": "Swift 6 schema-3 monitor compile passed; Python acceptance tests 8/8 passed",
     "locked_session_guard": "CLI inspect_ui reported locked prerequisite; read-only diagnostic, no mutation tool requested",
     "latest_editor_focus_regressions": "passed: 118 tests in 3 suites, including AXPress/focus policy, ComboBox press compatibility and positional ancestor selection",
-    "latest_test_safe": "passed: exit 0; 112 + 1475 + 50 + 147 + 607 = 2391 Swift Testing cases plus script/Node checks"
+    "latest_test_safe": "passed: exit 0; 112 + 1475 + 50 + 147 + 607 = 2391 Swift Testing cases plus script/Node checks",
+    "hidden_offspace_targeted": "passed: 107 Swift Testing tests in 8 suites plus 20 XCTest tests",
+    "latest_swiftformat": "passed: 0/2112 require formatting",
+    "latest_docs_lint": "passed",
+    "latest_root_swift_lint": "passed: 112 warnings, zero serious violations"
   },
   "historical_foreground_comparison": {
     "path": "repeated-uninterrupted-2026-10-15",
@@ -33,7 +37,7 @@
     "applies_to_current_binary": false
   },
   "experimental_native_single_click_delivery": "removed; never shipped",
-  "temporary_ui_cleanup": "Discord hidden and original ChatGPT/Codex app restored with verified native results; existing Finder window left intact; no temporary fixture created",
+  "temporary_ui_cleanup": "No fixture created. Standard Discord hidden again; original foreground application, receiver, pointer, visible windows and Space unchanged in 12 cleanup samples.",
   "baseline_commit": "1e42f1d9053109d6d19e604504ea80bc229a88e8",
   "previous_published_binary": {
     "path": "/tmp/peekaboofast-current",
@@ -60,24 +64,134 @@
     "hidden_offspace_supported": false
   },
   "latest_source_sha256": {
-    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/ActionInputDriver.swift": "448221bfb15fa51c346f842dcf84653d87b623cbbd50b305de279757e92512f8",
-    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/BackgroundInputDriver.swift": "ad238600f7514c80a7895f9a958a7095735f295daac47a9c9b5c78fb5ef3b424",
-    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/ActionInputDriverTests.swift": "271f2170812d8b4ebf0cb1bb81321642a4c98095a31be0ba4bb2eb66c6cc8c80",
-    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/BackgroundInputDriverPositionalTargetTests.swift": "d22108463dee90de5bdddc65736860b6846d3003009931d9645ad639b8b97f6f"
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/Core/Protocols/UIAutomationOperationModels.swift": "5107062b8eb1a452b908599efe69d1aec49beb36790dbdf676b7c43d7a1abaa9",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/Core/Protocols/UIAutomationServiceProtocol.swift": "d2577b7649d089d1c09745914da0e5e62336b88c14390505028eb6da219912b2",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/AXMutationObservation.swift": "6b7305543ce781d4fabc4feecde9c850b3f6a930d8a5fe12228b7a0c2f1d5d95",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/BackgroundInputDriver+KeyboardEvents.swift": "96dfb6523f868d1e6fd130a77341ec0fdaa15ccbfc2e0e3547fe3b3566590d4d",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/BackgroundInputDriver.swift": "bcc3ba73328a9f36f64d143d8800af39e78edd98e6c167457b1f4b4dad52cb3d",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/DetachedAXObservationWorker.swift": "73562d0743c85923457d8e4f35a173cd41e15cfaaa54829e0d443571ccf5d261",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/DetachedExactWindowFocusReader.swift": "9b904a00c94f89c497cda17dd8eda796a81ae3018736f3a55f3a377cfa25ca76",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/ElectronAXReadRefresh.swift": "26a83c2d9cf53b2d6e02cb3fa2e2441bca7fb95b94c186ff311352b839a83f0b",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/ElectronAccessibilityBootstrap.swift": "b051e38cff5646afee51680546af9e424bbdeb1b8dce2309932243fdcfd3f90b",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/HotkeyService.swift": "70b87d13cc8049ecc48e6cad1c33dc64f860a7f483349bbcfbe30c9233605116",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/TargetedTypeInputDriver.swift": "16b8555f3481414f92b1a0cabbc46d70638c49f59fc4edb3b3c461dcabc01a16",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/TextInputRoute.swift": "96340d61fcb890560ffce023916cba210c93f37fe198fd60bb040324b47ae77f",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/TypeService.swift": "956dc8a99a57e027d86c093bcab3f13848e70b6eca77651535fd2290533dfefb",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/UIAutomationService+ElementLookup.swift": "38bd23e2cee73df7a6bdd1b6d5a6e9cca086bb1dddafa5f2ca9b8e71a5161ea4",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/UIAutomationService+TypingOperations.swift": "cdce75e96457f7ffb32fd62e250711983071186eed7e8b548b04bbbcfd5a1f99",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Services/UI/UIAutomationService.swift": "5444aba9f9d032287991aac535457f12adf48fc27dc65c260150426bf94eb257",
+    "Core/PeekabooAutomationKit/Sources/PeekabooAutomationKit/Strategy/UIAutomationTarget.swift": "c45dfa6ab1f43481bb491828071204598530053618d7976f6910ef849e66a91d",
+    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/AsyncAXTypingTests.swift": "d509703b4a4427e9736ba6ddc8970062bda1272262f43bf5aa726b673258b7c9",
+    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/BackgroundTextInputDeliveryTests.swift": "f4b1c6ae9dc42980d3fbddc0dc56d221eaaa1cb3eab777e336e5167def66d29f",
+    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/ElectronAXReadRefreshTests.swift": "a94d3c451bce0da46043a23f2197c0734759a02b5e5771978ead15f8ae01cc8d",
+    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/ElectronAccessibilityBootstrapTests.swift": "6313dc75d5b86b1890a868d0e0ee09c08b93eb04aeb5ad15a96d7f91ca0ff7ac",
+    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/ExactWindowValueObservationTests.swift": "b6d4a22d5f0dd8a6ccb45fe3acdb207112ca8798b74a30c21122572189173054",
+    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/TargetedTypeInputPolicyTests.swift": "4f66dc4ec523ffdf5e82f997adbe3061b1c24504d8a5573fb3d1dea7997b3af0",
+    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/TypeServicePixelFocusTests.swift": "7778e049614621c71185dafac22f7d74b798649eefdfbbd0da42cd7437e14428",
+    "Core/PeekabooAutomationKit/Tests/PeekabooAutomationKitTests/TypeServiceTargetResolutionTests.swift": "e2229bb84f99be258eea627e25e03238ce9f4eaf2dba5c7d95b29f748f4e18e8",
+    "benchmarks/batch-state-diff/focus-monitor.swift": "2a18b5d35161aff9589487715d9c52eaf9da3f0c2e0a19c0ee10bdc77d372aca"
   },
-  "post_measurement_hardening": "Final source preserves combo-box AXPress and chooses positional editor focus before a pressable ancestor; semantic AXTextArea path used by the measured Discord cohort is unchanged.",
+  "post_measurement_hardening": "None for the hidden/off-Space input backend; measured binary is the final source build. Documentation/validation records were updated after measurement.",
   "current_binary": {
-    "path": "/tmp/peekaboofast-qualified",
-    "sha256": "370803883f2e40f6a1bdca360477a0cbbe7cad0be4f0d1b50f63612b2985249c",
-    "build": "debug, arm64, Swift 6.4, macOS 26.6.2",
-    "qualification": "final source CLI build + full safe tests + 118 driver tests; live cohort used the separately recorded editor-focus binary",
-    "same_binary_as_live_cohort": false
+    "path": "/tmp/peekaboofast-hidden-qualified-final",
+    "sha256": "c048acf8416ed8a27050a5c5199c4d122a97d7838546a91da41884dcf400c76d",
+    "build": {
+      "architecture": "arm64",
+      "macos_version": "26.6.2"
+    },
+    "same_binary_as_live_cohort": true,
+    "qualification": "CLI build + 107 Swift Testing and 20 XCTest targeted cases + full safe suite (2391 reported Swift Testing tests and script/Node checks) passed; exact binary measured in both cohorts",
+    "preserved_local_path": "/Users/sora/Code/Peekaboo/.build/qualification/peekaboo"
   },
   "validation_log_sha256": {
     "peekaboofast-final-test-safe.log": "e534a97484796eb52ce671d693aac24201d617925de935e0585a0f9779b1d23f",
     "peekaboofast-final-qualified-build.log": "321325c73cef5c8fb85a43c656bd1eec06aaf1ce6734ac8a377339604f34bebc",
     "peekaboofast-editor-final-tests.log": "868d51521d57ddfb63d200f5c4bd71003df5777ec3e338afb866493c38815b93",
     "peekaboofast-final-lint-clean.log": "f95893ef71f14b6ab8d6441e6babc9fd7922e84b0cb768e93dab21404009eacf",
-    "peekaboofast-final-format-check.log": "a7d2a8891cf6586aad035bacbe40b5abc05013526ff708d6e40010b942052c36"
+    "peekaboofast-final-format-check.log": "a7d2a8891cf6586aad035bacbe40b5abc05013526ff708d6e40010b942052c36",
+    "peekaboofast-hidden-qualified-final-build.log": "bb5a61589468c3f67abe32432274a84a9eb21e7e18fd5a67b1a00b41ae932ab0",
+    "peekaboofast-hidden-targeted-qualified.log": "35425fd53c83d021e57cbedc4d85c2d67babd4d2087efdb281d404fefe70ea5c",
+    "peekaboofast-hidden-format-check.log": "7895aeb8d67ba0180f3b99327ba19d477817aaaa3cceae33610db292a46e25ed",
+    "peekaboofast-hidden-final-lint.log": "e2d42978d7ebc3a2d5842bd7710234541a95e01b66101c59a21e9f42ab5f4223",
+    "peekaboofast-hidden-docs-lint.log": "cd95f223719d4660964c9b82fcc5b24b47be39c3a9971c23fefd5652889c6677",
+    "peekaboofast-hidden-monitor-tests.log": "f8f7b0ac7f2b53ac4e96000f166430c488f2c37e059ad5502b09d60f29d363b8",
+    "peekaboofast-hidden-test-safe.log": "4f3e74d75dc86127345d6867e44b9a2db02dee44eb8dbc34505b19de7b2fdd86"
+  },
+  "historical_current_binary": {
+    "path": "/tmp/peekaboofast-qualified",
+    "sha256": "370803883f2e40f6a1bdca360477a0cbbe7cad0be4f0d1b50f63612b2985249c",
+    "build": "debug, arm64, Swift 6.4, macOS 26.6.2",
+    "qualification": "final source CLI build + full safe tests + 118 driver tests; live cohort used the separately recorded editor-focus binary",
+    "same_binary_as_live_cohort": false
+  },
+  "hidden_offspace_qualification": {
+    "hidden": {
+      "records": "hidden-controlled-2026-10-15",
+      "before": {
+        "successes": 0,
+        "attempts": 5,
+        "success_rate": 0.0,
+        "successful_elapsed_ms": [],
+        "median_ms": null,
+        "min_ms": null,
+        "max_ms": null
+      },
+      "after": {
+        "successes": 5,
+        "attempts": 5,
+        "success_rate": 1.0,
+        "successful_elapsed_ms": [
+          12308.725667,
+          12114.637292,
+          12119.662875,
+          11935.271541,
+          12046.1705
+        ],
+        "median_ms": 12114.637292,
+        "min_ms": 11935.271541,
+        "max_ms": 12308.725667
+      },
+      "native_samples": 1224,
+      "workspace_preservation_all_trials": true,
+      "independent_cua_messages": 5,
+      "composer_empty": true
+    },
+    "offspace": {
+      "records": "offspace-controlled-2026-10-15",
+      "before": {
+        "successes": 0,
+        "attempts": 5,
+        "success_rate": 0.0,
+        "successful_elapsed_ms": [],
+        "median_ms": null,
+        "min_ms": null,
+        "max_ms": null
+      },
+      "after": {
+        "successes": 5,
+        "attempts": 5,
+        "success_rate": 1.0,
+        "successful_elapsed_ms": [
+          10068.72325,
+          9971.837667,
+          9840.737541,
+          9822.011459,
+          9847.690375
+        ],
+        "median_ms": 9847.690375,
+        "min_ms": 9822.011459,
+        "max_ms": 10068.72325
+      },
+      "native_samples": 1095,
+      "workspace_preservation_all_trials": true,
+      "independent_cua_messages": 5,
+      "composer_empty": true
+    },
+    "scope": "Standard Discord, local AX backend, server→DM tab→recipient→focus→clear/type→Return→sent text and empty composer. Both versions batch, 5 attempts each per condition. No LLM time, no baseline successful median or speedup ratio.",
+    "preparation_and_cleanup": [
+      "offspace-preparation-2026-10-15.json",
+      "offspace-preparation-attempt2-2026-10-15.json",
+      "offspace-cleanup-2026-10-15.json"
+    ]
   }
 }

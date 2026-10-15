@@ -891,8 +891,8 @@ extension AsyncAXTypingTests {
                     try await BackgroundInputDriver.replaceFocusedText(
                         with: text, exactWindow: window, phase: phase, validatedReceiver: receiver, access: self.access)
                 },
-                typeCharacter: { character, _ in self.events.append(String(character)) },
-                tapKey: { code, _, _ in self.events.append(String(code)) })
+                typeCharacter: { character, _, _ in self.events.append(String(character)) },
+                tapKey: { code, _, _, _ in self.events.append(String(code)) })
             let service = TypeService(
                 snapshotManager: InMemorySnapshotManager(),
                 inputPolicy: UIInputPolicy(defaultStrategy: self.settlement == .emptyUnsupported

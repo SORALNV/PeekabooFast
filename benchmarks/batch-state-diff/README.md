@@ -251,8 +251,9 @@ The preceding harness is preserved in `background-all-window-harness/`.
 
 ### Scope and unresolved cases
 
-This is an already-onscreen, same-Space result. Hidden/off-Space navigation remains
-unresolved: the post-unlock hidden pilot failed verification. No product fallback
+This historical cohort is an already-onscreen, same-Space result. Hidden/off-Space
+navigation was unresolved at that revision: its post-unlock hidden pilot failed verification.
+The later hidden/off-Space qualification below supersedes that limitation. No product fallback
 activates/unhides targets or switches Spaces during user work. The result does not
 establish a general replacement for ChatGPT Computer Use. Discord was hidden and
 the original ChatGPT/Codex app restored after testing.
@@ -298,3 +299,59 @@ insufficient samples is unknown evidence, never a successful preservation result
 against focus theft, pointer motion, visible reordering, hidden-window churn and
 missing evidence. Schema-2 logs retain legacy all-window hashes for diagnosis;
 onscreen windows determine the window-order acceptance predicate.
+
+## Hidden and off-Space qualification (2026-10-15)
+
+This comparison isolates the follow-up backend fixes from the preceding published fork
+(`1c1316f0`). Both sides use batch mode, one outer MCP request, the same eleven driver
+steps/five verifications, exact PID/window/recipient and server-reset procedure. It is
+separate from the upstream sequential versus fork batch comparison above.
+
+| Condition | Before successes | After successes | After successful median | After range |
+| --- | ---: | ---: | ---: | ---: |
+| Application hidden | 0/5 | 5/5 | 12.115 s | 11.935–12.309 s |
+| Application unhidden, window exclusively on another Space | 0/5 | 5/5 | 9.848 s | 9.822–10.069 s |
+
+Both cohorts kept the target on a different Space from all active display Spaces;
+the hidden cohort additionally kept the app hidden, while the off-Space cohort kept it
+unhidden. Every trial, including the ten baseline failures, preserved the workspace. Hidden trials
+recorded 1,224 samples; off-Space trials recorded 1,095. Schema 3 adds target hidden state,
+exact target bounds, visible non-target geometry, lock state and target/active Space IDs
+for all displays. Nonvisible-state runs refuse before input if their initial monitor
+samples do not establish the requested condition. Later drift still fails acceptance.
+This is sampled evidence, not a guarantee against changes between samples.
+
+Before binary SHA-256: `370803883f2e40f6a1bdca360477a0cbbe7cad0be4f0d1b50f63612b2985249c`.
+After binary SHA-256: `c048acf8416ed8a27050a5c5199c4d122a97d7838546a91da41884dcf400c76d`.
+The exact after binary was used in both complete counterbalanced cohorts, with no build,
+CUA inspection or extra GUI probes during either cohort. Startup and server preparation
+are excluded from speed timings but included in workspace monitoring. LLM time is absent.
+Baseline failures at server preparation remain failed attempts; their absent timed latency
+must not be replaced with a timeout or omitted from reliability. No before-success median
+or speedup ratio can be computed. Five attempts per version/condition is a small host-specific
+sample. CUA independently observed five after messages and an empty composer for each cohort.
+
+Raw records and manifests are in `hidden-controlled-2026-10-15` and
+`offspace-controlled-2026-10-15`; `cua-readback.json` stores only our own test text and
+readback outcome. Diagnostic pilots with different binaries, including the locked pilot,
+are retained separately in `hidden-diagnostic-pilots-2026-10-15` and are not pooled.
+Off-Space preparation/cleanup monitor files are retained alongside the cohort directories.
+The first setup attempt refused before mutation because an offscreen catalog flag was
+absent; the second used onscreen-only inventory. Unhide/hide changed only the intended app's
+hidden state while target windows remained offscreen and user workspace properties stayed
+stable. The target was restored to hidden after testing. No fixture was created.
+
+Reproduce only with already observed exact identifiers and a target in the chosen state:
+
+```sh
+python3 benchmarks/batch-state-diff/repeat-discord.py \
+  --before /tmp/peekaboofast-qualified --after /tmp/peekaboofast-hidden-qualified-final \
+  --before-mode batch --pid CURRENT_PID --window CURRENT_WINDOW \
+  --server OBSERVED_SERVER --recipient OBSERVED_RECIPIENT --dm-label OBSERVED_DM_LABEL \
+  --output NEW_OUTPUT_DIRECTORY --background-only --target-state hidden \
+  --monitor /tmp/peekaboofast-hidden-qualified-monitor --require-preserved-workspace
+```
+
+Use `--target-state offspace` only when the target is unhidden and belongs exclusively to
+nonvisible Spaces. The product never unhides or moves a target to manufacture this condition.
+See [causes and fixes](../../docs/discord-window-diagnosis.md#hiddenoff-space-follow-up-distinct-causes-and-repairs).

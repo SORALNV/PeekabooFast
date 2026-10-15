@@ -567,6 +567,8 @@ extension ForegroundModifierClickServiceProtocol {
 @MainActor
 public protocol ExactWindowTargetedKeyboardServiceProtocol: CompositeTypeDeliveryServiceProtocol {
     var supportsExactWindowTargetedKeyboard: Bool { get }
+    /// Each native keyboard event carries the exact NSWindow number, independently of app key-window state.
+    var supportsWindowNumberKeyboardRouting: Bool { get }
     var exactWindowTargetedKeyboardUnavailableReason: String? { get }
 
     func typeActions(
@@ -595,6 +597,10 @@ public protocol ExactWindowTargetedKeyboardServiceProtocol: CompositeTypeDeliver
 }
 
 extension ExactWindowTargetedKeyboardServiceProtocol {
+    public var supportsWindowNumberKeyboardRouting: Bool {
+        false
+    }
+
     public func typeActions(
         _: [TypeAction],
         cadence _: TypingCadence,
