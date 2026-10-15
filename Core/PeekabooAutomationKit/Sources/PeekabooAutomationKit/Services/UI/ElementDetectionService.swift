@@ -415,7 +415,8 @@ public final class ElementDetectionService {
                 appIsActive: targetApp.isActive,
                 traversalBudget: budget,
                 timing: DetachedAXObservationTiming(hardTimeoutSeconds: timeoutSeconds),
-                allowApplicationScopedFallback: allowApplicationScopedFallback)
+                allowApplicationScopedFallback: allowApplicationScopedFallback,
+                requestsManualAccessibility: WindowRoutedApplicationClassifier.isElectron(targetApp))
         }
 
         guard SystemIdentityResolver.processStartIdentity(processIdentifier) == outcome.processStartIdentity else {

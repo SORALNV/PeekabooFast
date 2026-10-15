@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "mode": "sequential",
+  "text": "Peekaboo 12056573 A04",
+  "phase": "preparation",
+  "error": "{'is_error': True, 'tool': None, 'meta': {'dispatch_state': 'none', 'effect': 'refused', 'escalation': 'refresh_target', 'evidence': 'request_refused', 'mutation_dispatched': False, 'requires_fresh_observation': False, 'retry_safe': True, 'retry_safety': 'safe', 'state': 'refused', 'target_receipt': {'pid': 24935, 'process_start_identity': 1790525405392460, 'process_start_identity_decimal': '1790525405392460', 'window_id': 144370}}, 'message': 'Window not found: windowId 144370 changed exact focus identity windowNotFound(criteria: Optional(\"windowId 144370 changed exact focus identity\")) Refresh the exact window receipt before retrying.', 'verification': None}",
+  "trial": 4,
+  "version": "before",
+  "exit_code": 1
+}

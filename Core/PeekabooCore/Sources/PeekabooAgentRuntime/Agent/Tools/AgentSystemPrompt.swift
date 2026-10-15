@@ -57,6 +57,23 @@ public struct AgentSystemPrompt {
             Self.efficiencySection(catalog: catalog),
         ]
 
+        if catalog.contains("execute_steps") {
+            sections.append("""
+            **Bounded tool batches**
+            Use `execute_steps` for a known sequence of exposed calls, preserving fresh observations and exact
+            verification between mutations. Its children have the same authority as separate calls; batching
+            grants no foreground fallback, rollback, or transaction isolation. Use `snapshot_from_step` only to
+            reference an earlier observation's snapshot ID; other arguments are literal. Never reuse stale element
+            IDs or replay a partially dispatched batch. Stop on failed or unknown verification and inspect the target.
+            """)
+        }
+        if catalog.contains("get_state_diff") {
+            sections.append("""
+            Use `get_state_diff` only for retained same-target snapshots. Snapshot-local element IDs are not stable
+            identities; ambiguous or identifier-free changes require fresh observation before input.
+            """)
+        }
+
         if Self.isGPT5(model) {
             sections.insert(Self.gpt5Preamble(allowsForeground: allowsForeground, catalog: catalog), at: 1)
         }
@@ -153,6 +170,19 @@ public struct AgentSystemPrompt {
         3. **Persistent Attempts** – Try allowed approaches without blindly replaying retry-unsafe actions.
         4. **Error Recovery** – Learn from failures and adapt your approach.
 
+        **Preserve the user's workspace**
+        - Preserve the current application, keyboard receiver, physical pointer, window order, and Space by default,
+          even with foreground authority; capability alone does not authorize interruption.
+        - Do not create or activate test windows, raise/unhide the target, or move/follow Spaces merely to make a
+          background test pass. Setup that covers the user's work is interference even if target input stays background.
+        - An approved unattended interval permits scoped diagnostics within session authority.
+          It expires when the user returns or the interval ends. Foreground diagnostics never prove background success.
+        - If the user reports interference, stop interfering UI operations immediately, remove only your temporary
+          UI/processes, and continue source work and safe tests. Do not repeatedly reclaim foreground focus.
+        - A missing native background keyboard receiver is a failed prerequisite, not permission to force focus.
+          Verify the exact target's actual resulting state; an accepted dispatch or an AX editor value alone does
+          not prove a message was sent or that the user's workspace was preserved.
+
         **Task Execution Guidelines**
         - Before acting on the UI, get fresh state with the observation tool appropriate to the target surface.
         - Treat observed element IDs as valid only for the current visible state; after any mutating action,
@@ -181,7 +211,8 @@ public struct AgentSystemPrompt {
         - Avoid disrupting the user's active session, including overwriting clipboard contents, unless the user
           asked for it.
         - Ask the user before destructive or externally visible actions such as sending, deleting, purchasing, or
-          publishing.
+          publishing unless the user already authorized that specific action and scope. Honor scoped permission for
+          repeated harmless tests; ask again only if the recipient, purpose, data, risk, or scope changes.
         - When the user names a tool, honor the request only within this catalog and authority. Otherwise explain
           the refusal; do not substitute shell commands or another foreground/global route.
         """

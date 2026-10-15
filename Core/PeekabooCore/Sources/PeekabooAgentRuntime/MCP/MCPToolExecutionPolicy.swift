@@ -180,7 +180,8 @@ private enum BackgroundOnlyToolPolicy {
             arguments.getBool("web_focus") == true
                 ? .activation("web_focus=true can focus embedded foreground UI")
                 : nil
-        case "verify_state", "analyze", "sleep", "set_value", "select_text", "done", "need_info":
+        case "execute_steps", "get_state_diff", "verify_state", "analyze", "sleep", "set_value", "select_text", "done",
+             "need_info":
             nil
         case "permissions":
             self.normalized(arguments.getString("action")) == "request"
@@ -546,6 +547,7 @@ private enum ForegroundAllowedAgentToolPolicy {
         "action", "analyze", "app", "browser", "capture", "click", "clipboard", "dialog", "dock", "done", "drag",
         "image", "inspect_ui", "menu", "move", "need_info", "paste", "permissions", "press", "scroll", "see",
         "set_value", "select_text", "sleep", "space", "type", "verify_state", "window",
+        "execute_steps", "get_state_diff",
     ]
 
     static func refusalMessage(toolName: String) -> String? {

@@ -1,0 +1,6 @@
+{
+  "success": false,
+  "mode": "batch",
+  "text": "Peekaboo benchmark after  G",
+  "error": "{'is_error': False, 'tool': None, 'meta': None, 'message': 'Verification unknown after 39 sample(s) in 10.010s.\\nApplication: Discord (PID 24935)\\nWindow: 144370 \"#twitter | 自作erの集い - Discord\"\\nReason: Accessibility traversal was truncated: Warning: AX tree truncated at time deadline. Retry with an exact app_target and window_id; this tool does not expose a timeout argument.\\nPredicates:\\n1. element_exists: unknown — Accessibility traversal was truncated: Warning: AX tree truncated at time deadline. Retry with an exact app_target and window_id; this tool does not expose a timeout argument.', 'verification': None}"
+}

@@ -61,7 +61,8 @@ public enum MCPToolCatalog {
 
     static func tools(context: MCPToolContext, selection: Selection) -> [any MCPTool] {
         let selectedNames = Set(selection.toolNames)
-        return self.unfilteredTools(context: context).filter { selectedNames.contains($0.name) }
+        return self.bindBatchTools(
+            self.unfilteredTools(context: context).filter { selectedNames.contains($0.name) }, context: context)
     }
 
     private static func filteredTools(
@@ -83,10 +84,19 @@ public enum MCPToolCatalog {
             filters: filters,
             log: log)
 
-        return ToolFiltering.applyInputStrategyAvailability(
+        let availableTools = ToolFiltering.applyInputStrategyAvailability(
             filteredTools,
             policy: inputPolicy,
             log: log)
+        return self.bindBatchTools(availableTools, context: context)
+    }
+
+    private static func bindBatchTools(_ tools: [any MCPTool], context: MCPToolContext) -> [any MCPTool] {
+        tools.map { tool in
+            tool.name == "execute_steps"
+                ? ExecuteStepsTool(context: context, tools: tools.filter { $0.name != "execute_steps" })
+                : tool
+        }
     }
 
     public static func unfilteredTools(context: MCPToolContext) -> [any MCPTool] {
@@ -98,6 +108,8 @@ public enum MCPToolCatalog {
             BrowserTool(context: context),
             PermissionsTool(context: context),
             SleepTool(),
+            ExecuteStepsTool(context: context, tools: []),
+            GetStateDiffTool(context: context),
 
             // UI automation tools
             SeeTool(context: context),

@@ -1,0 +1,11 @@
+{
+  "success": false,
+  "mode": "batch",
+  "text": "Peekaboo 12056573 B02",
+  "phase": "timed_workload",
+  "error": "{'is_error': True, 'tool': 'click', 'meta': {}, 'message': 'Failed to perform click: Snapshot is stale: Exact-window click identity changed before final dispatch; capture a fresh snapshot. Re-run peekaboo see to refresh.', 'verification': None}",
+  "elapsed_ms": 5445.611542,
+  "trial": 2,
+  "version": "after",
+  "exit_code": 1
+}

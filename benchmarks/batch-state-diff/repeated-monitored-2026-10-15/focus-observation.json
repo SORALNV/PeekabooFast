@@ -1,0 +1,148 @@
+{
+  "read_only_monitor": true,
+  "poll_interval_ms": 100,
+  "target_pid": 24935,
+  "window_id": 144370,
+  "samples_in_trial_intervals": 932,
+  "transitions": [
+    {
+      "timestamp": 1792041359.6062279,
+      "ax_target_focused": true,
+      "target_frontmost": true,
+      "width": 868,
+      "height": 796,
+      "on_screen": true
+    },
+    {
+      "timestamp": 1792041383.608345,
+      "ax_target_focused": false,
+      "target_frontmost": false,
+      "width": 868,
+      "height": 796,
+      "on_screen": false
+    },
+    {
+      "timestamp": 1792041383.719629,
+      "ax_target_focused": false,
+      "target_frontmost": false,
+      "width": 868,
+      "height": 796,
+      "on_screen": true
+    },
+    {
+      "timestamp": 1792041384.400954,
+      "ax_target_focused": false,
+      "target_frontmost": false,
+      "width": 868,
+      "height": 796,
+      "on_screen": false
+    },
+    {
+      "timestamp": 1792041384.624985,
+      "ax_target_focused": true,
+      "target_frontmost": true,
+      "width": 868,
+      "height": 796,
+      "on_screen": true
+    },
+    {
+      "timestamp": 1792041391.3838902,
+      "ax_target_focused": false,
+      "target_frontmost": false,
+      "width": 868,
+      "height": 796,
+      "on_screen": false
+    },
+    {
+      "timestamp": 1792041394.45239,
+      "ax_target_focused": true,
+      "target_frontmost": true,
+      "width": 868,
+      "height": 796,
+      "on_screen": true
+    }
+  ],
+  "trial_alignment": [
+    {
+      "trial": 1,
+      "version": "before",
+      "success": true,
+      "sample_count": 135,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 2,
+      "version": "after",
+      "success": false,
+      "sample_count": 81,
+      "non_target_foreground_samples": 6,
+      "offscreen_samples": 1
+    },
+    {
+      "trial": 3,
+      "version": "after",
+      "success": false,
+      "sample_count": 82,
+      "non_target_foreground_samples": 23,
+      "offscreen_samples": 22
+    },
+    {
+      "trial": 4,
+      "version": "before",
+      "success": false,
+      "sample_count": 3,
+      "non_target_foreground_samples": 3,
+      "offscreen_samples": 3
+    },
+    {
+      "trial": 5,
+      "version": "before",
+      "success": false,
+      "sample_count": 2,
+      "non_target_foreground_samples": 2,
+      "offscreen_samples": 2
+    },
+    {
+      "trial": 6,
+      "version": "after",
+      "success": true,
+      "sample_count": 116,
+      "non_target_foreground_samples": 2,
+      "offscreen_samples": 2
+    },
+    {
+      "trial": 7,
+      "version": "after",
+      "success": true,
+      "sample_count": 114,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 8,
+      "version": "before",
+      "success": true,
+      "sample_count": 142,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 9,
+      "version": "before",
+      "success": true,
+      "sample_count": 141,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 10,
+      "version": "after",
+      "success": true,
+      "sample_count": 116,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    }
+  ],
+  "note": "Other frontmost process was separately identified as the Codex/ChatGPT app. Activation initiator is not established."
+}

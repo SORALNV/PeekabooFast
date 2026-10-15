@@ -366,7 +366,7 @@ struct AutomationElementResolver: AutomationElementResolving {
             return [root]
         }
 
-        let windows = axApp.windows() ?? []
+        let windows = AXKnownWindowCandidates.elements(application: axApp.element, timeout: 1) ?? []
 
         if let title = windowContext?.windowTitle?.trimmingCharacters(in: .whitespacesAndNewlines),
            !title.isEmpty,

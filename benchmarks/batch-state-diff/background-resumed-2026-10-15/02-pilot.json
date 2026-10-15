@@ -1,0 +1,18 @@
+{
+  "mode": "batch",
+  "elapsed_ms": 10668.297542,
+  "mcp_calls": 1,
+  "driver_steps": 11,
+  "verifications": 5,
+  "success": true,
+  "initial_state": "server",
+  "recipient": "たぬき",
+  "text": "PeekabooFast native bg 04",
+  "background_only": true,
+  "llm_included": false,
+  "composer_empty": true,
+  "exploratory_trial": 2,
+  "conditions": "CUA had previously established native editor focus; enhanced AX active",
+  "controlled_comparison": false,
+  "workspace_preservation_certified": false
+}

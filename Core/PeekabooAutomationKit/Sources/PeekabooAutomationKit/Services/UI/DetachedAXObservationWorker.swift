@@ -35,6 +35,7 @@ struct DetachedAXObservationRequest: Sendable {
     let traversalBudget: AXTraversalBudget
     let timing: DetachedAXObservationTiming
     var allowApplicationScopedFallback = false
+    var requestsManualAccessibility = false
 }
 
 struct DetachedAXObservationTiming: Sendable, Equatable {
@@ -85,7 +86,7 @@ enum DetachedAXPostChildStopReason: Equatable {
     case deadline
 }
 
-/// A deliberately small read-only AX implementation for background observation workers.
+/// A small AX observation worker with the documented, non-focusing Electron accessibility handshake.
 /// It creates every AX reference inside the worker lane and returns only immutable Sendable values.
 enum DetachedAXObservationWorker {
     private static let maximumPerCallTimeout = 0.2
@@ -215,7 +216,8 @@ enum DetachedAXObservationWorker {
     }
 
     static func inspect(_ request: DetachedAXObservationRequest) throws -> DetachedAXObservationResult {
-        try self.inspect(
+        try DesktopSessionLockState.requireUnlockedForAccessibility(DesktopSessionLockState.currentScreenIsLocked())
+        return try self.inspect(
             request,
             resolveWindow: { application, request, deadline in
                 try self.resolveWindow(application: application, request: request, deadline: deadline)
@@ -251,6 +253,17 @@ enum DetachedAXObservationWorker {
         let deadline = ContinuousClock.now.advanced(by: .seconds(request.timing.cooperativeDeadlineSeconds))
         let application = AXUIElementCreateApplication(request.processIdentifier)
         self.prepare(application, deadline: deadline)
+        if request.requestsManualAccessibility {
+            // Electron's documented assistive-client handshake enables actionable web AX nodes.
+            // This is not window activation: never set AXEnhancedUserInterface or AXFocused here.
+            try ElectronAccessibilityBootstrap.request(
+                isElectron: true,
+                deadline: deadline,
+                validateIdentity: { try validateIdentity(request) },
+                setManualAccessibility: {
+                    AXUIElementSetAttributeValue(application, "AXManualAccessibility" as CFString, kCFBooleanTrue)
+                })
+        }
 
         let window: AXUIElement
         let isApplicationScopedFallback: Bool
@@ -329,7 +342,9 @@ enum DetachedAXObservationWorker {
                 candidates: state.focusedReferences,
                 isComplete: !isApplicationScopedFallback && state.truncationInfo?.isTruncated != true),
             canRead: { self.remainingMessagingTimeout(until: deadline) != nil },
-            readCurrentReference: { self.focusedReference(application: application, deadline: deadline) },
+            readCurrentReference: { self.focusedReference(
+                application: application,
+                deadline: deadline) },
             referencesEqual: { CFEqual($0, $1) },
             belongsToWindow: {
                 self.focusedElement(
@@ -475,7 +490,10 @@ enum DetachedAXObservationWorker {
                     criteria: "window id \(requestedID) owned by PID \(request.processIdentifier)")
             }
 
-            let windows = self.elementsAttribute(kAXWindowsAttribute, of: application)
+            let windows = AXKnownWindowCandidates.supplement(
+                listed: self.elementsAttribute(kAXWindowsAttribute, of: application),
+                application: application,
+                deadline: deadline)
             let candidates = self.exactWindowCandidates(
                 windows: windows,
                 remainingTimeout: { self.remainingMessagingTimeout(until: deadline) },
@@ -491,7 +509,10 @@ enum DetachedAXObservationWorker {
                 criteria: "accessible window id \(requestedID) owned by PID \(request.processIdentifier)")
         }
 
-        let windows = self.elementsAttribute(kAXWindowsAttribute, of: application)
+        let windows = AXKnownWindowCandidates.supplement(
+            listed: self.elementsAttribute(kAXWindowsAttribute, of: application),
+            application: application,
+            deadline: deadline)
         if let title = request.windowTitle,
            let match = windows.first(where: {
                self.prepare($0, deadline: deadline)

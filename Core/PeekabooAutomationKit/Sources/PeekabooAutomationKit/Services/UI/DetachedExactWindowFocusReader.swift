@@ -323,6 +323,12 @@ enum DetachedExactWindowFocusReader {
         switch self.targetWindow(
             expectedWindowID: expected.windowID,
             inventory: self.attributeRead(kAXWindowsAttribute, of: application),
+            fallbackWindows: {
+                AXKnownWindowCandidates.supplement(
+                    listed: [],
+                    application: application,
+                    deadline: .now.advanced(by: .milliseconds(100)))
+            },
             copyWindowID: { element, windowID in
                 AXUIElementSetMessagingTimeout(element, self.messagingTimeout)
                 return AXWindowIDResolver.copyWindowID(element, into: &windowID)
@@ -330,6 +336,11 @@ enum DetachedExactWindowFocusReader {
         {
         case let .success(value): window = value
         case let .failure(error): return .failure(error)
+        }
+
+        // Avoid a full tree scan before each character when the live exact receiver can be proven.
+        if let snapshot = self.liveFocusedReceiver(application: application, expected: expected, phase: phase) {
+            return .success(snapshot)
         }
 
         var queue = [window]
@@ -421,9 +432,48 @@ enum DetachedExactWindowFocusReader {
             nativeElement: RetainedFocusElement(element: element)))
     }
 
+    private static func liveFocusedReceiver(
+        application: AXUIElement,
+        expected: FocusedElementIdentity,
+        phase: KeyboardFocusValidationPhase) -> ExactWindowFocusSnapshot?
+    {
+        // Inventory fallback restores temporary timeouts; bound this separate focus probe too.
+        AXUIElementSetMessagingTimeout(application, self.messagingTimeout)
+        guard let receiver = self.focusedElementReference(of: application) else { return nil }
+        AXUIElementSetMessagingTimeout(receiver, self.messagingTimeout)
+        let isFocused = self.boolAttribute(kAXFocusedAttribute, of: receiver) == true
+        AXUIElementSetMessagingTimeout(receiver, 0)
+        guard isFocused,
+              let snapshot = self.read(element: receiver, processIdentifier: expected.processIdentifier),
+              Self.matchesLiveReceiver(snapshot, expected: expected, phase: phase)
+        else { return nil }
+        return snapshot
+    }
+
+    static func matchesLiveReceiver(
+        _ snapshot: ExactWindowFocusSnapshot,
+        expected: FocusedElementIdentity,
+        phase: KeyboardFocusValidationPhase) -> Bool
+    {
+        guard let windowID = snapshot.windowID, let role = snapshot.role,
+              !snapshot.frame.isEmpty, snapshot.nativeElement != nil
+        else { return false }
+        return FocusedElementReceiptResolver.matches(
+            FocusedElementIdentity(
+                processIdentifier: snapshot.processIdentifier,
+                windowID: windowID,
+                role: role,
+                title: snapshot.title,
+                identifier: snapshot.identifier,
+                frame: snapshot.frame),
+            expected: expected,
+            phase: phase)
+    }
+
     static func targetWindow(
         expectedWindowID: Int,
         inventory: AXDescriptorReader.SingleAttributeRead?,
+        fallbackWindows: () -> [AXUIElement] = { [] },
         copyWindowID: (AXUIElement, inout CGWindowID) -> AXError)
         -> Result<AXUIElement, FocusedElementReceiptError>
     {
@@ -436,9 +486,11 @@ enum DetachedExactWindowFocusReader {
         else {
             return .failure(.windowObservationFailed(stage: .inventory, errorCode: nil))
         }
+        let windows = values.isEmpty
+            ? fallbackWindows()
+            : values.map { unsafeDowncast($0 as CFTypeRef, to: AXUIElement.self) }
         var firstUnreadable: FocusedElementReceiptError?
-        for value in values {
-            let window = unsafeDowncast(value as CFTypeRef, to: AXUIElement.self)
+        for window in windows {
             switch self.windowIdentifier(window, stage: .inventoryWindowID, copyWindowID: copyWindowID) {
             case let .success(windowID):
                 if windowID == expectedWindowID {

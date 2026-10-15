@@ -1,0 +1,63 @@
+{
+  "controlled_comparison": false,
+  "successes": 0,
+  "attempts": 6,
+  "product_delivery_experiments_removed": true,
+  "ui_tests_stopped_at_user_request": true,
+  "binary_sha256": {
+    "v1": "2c6a325867470ec526357535f1a9797b77c4e0e47f562f06d5611d70f951c975",
+    "v2": "98e967ae7821159894935467ad98c8487373a20dac43c751f28acd99343acaf8",
+    "v3": "ac5554724d9962ae050fcb0d39f99e67465cb4c94c94fd16cb8a6b1e5e4df590",
+    "v4": "d4169dac721b508823b0eb34abed542cf048d7c094647e5f928e46140645a828"
+  },
+  "limits": [
+    "Exploratory binaries differ; not a before/after cohort.",
+    "Binary hashes retained; experimental source revisions were not committed.",
+    "Fixture focus preservation does not prove that its window did not obstruct the user.",
+    "Raw private UI traces are not included."
+  ],
+  "focus_samples": [
+    {
+      "pilot": 1,
+      "samples": 14,
+      "front_fixture_samples": 14,
+      "target_on_screen_samples": 14,
+      "fixture_value_unchanged_samples": 14
+    },
+    {
+      "pilot": 2,
+      "samples": 14,
+      "front_fixture_samples": 14,
+      "target_on_screen_samples": 14,
+      "fixture_value_unchanged_samples": 14
+    },
+    {
+      "pilot": 3,
+      "samples": 26,
+      "front_fixture_samples": 26,
+      "target_on_screen_samples": 26,
+      "fixture_value_unchanged_samples": 26
+    },
+    {
+      "pilot": 4,
+      "samples": 86,
+      "front_fixture_samples": 86,
+      "target_on_screen_samples": 86,
+      "fixture_value_unchanged_samples": 86
+    },
+    {
+      "pilot": 5,
+      "samples": 126,
+      "front_fixture_samples": 126,
+      "target_on_screen_samples": 126,
+      "fixture_value_unchanged_samples": 126
+    },
+    {
+      "pilot": 6,
+      "samples": 129,
+      "front_fixture_samples": 67,
+      "target_on_screen_samples": 67,
+      "fixture_value_unchanged_samples": 129
+    }
+  ]
+}

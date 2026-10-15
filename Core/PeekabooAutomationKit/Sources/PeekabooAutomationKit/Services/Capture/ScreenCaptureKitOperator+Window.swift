@@ -796,7 +796,7 @@ extension ScreenCaptureKitOperator {
             ownerProcessIdentifier: ownerProcessIdentifier,
             ownerProcessStartIdentity: processStartIdentity,
             bounds: window.frame,
-            isMinimized: !window.isOnScreen)
+            isMinimized: window.isOnScreen ? false : nil)
     }
 
     private nonisolated static func validatedMutationIdentity(

@@ -1,4 +1,20 @@
-# Peekaboo 🫣 — Mac automation that sees the screen and does the clicks.
+# PeekabooFast
+
+Development fork of [openclaw/Peekaboo](https://github.com/openclaw/Peekaboo).
+CLI commands and Swift module names remain `peekaboo` / `Peekaboo` for compatibility.
+
+This fork adds bounded MCP batches, explicit snapshot references between batch steps,
+AX state differences, and fixes for exact-window discovery and focus validation.
+**Unattended Discord background sending is still under development.**
+The measured 28.1% Discord speed improvement required the target to remain foreground;
+it is not a background reliability claim. See [measurements](benchmarks/batch-state-diff/README.md),
+[batch API](docs/batch-state-diff.md), [background limitations](docs/background-execution.md),
+and the [external-client prompt](docs/background-client-prompt.md).
+
+Build this fork from source with `pnpm install --frozen-lockfile` and `pnpm run build:cli`.
+The Homebrew, npm, and release installation links below refer to the upstream project.
+
+## Upstream Peekaboo
 
 [![CI](https://img.shields.io/github/actions/workflow/status/openclaw/Peekaboo/macos-ci.yml?branch=main&style=flat-square&label=ci)](https://github.com/openclaw/Peekaboo/actions/workflows/macos-ci.yml) [![npm](https://img.shields.io/npm/v/%40steipete%2Fpeekaboo?style=flat-square)](https://www.npmjs.com/package/@steipete/peekaboo) [![GitHub release](https://img.shields.io/github/v/release/openclaw/Peekaboo?style=flat-square)](https://github.com/openclaw/Peekaboo/releases/latest) [![macOS 15+](https://img.shields.io/badge/macOS-15%2B-0078d7?logo=apple&logoColor=white&style=flat-square)](docs/platform-support.md) [![Swift 6.2](https://img.shields.io/badge/Swift-6.2-F05138?logo=swift&logoColor=white&style=flat-square)](https://swift.org/) [![Node](https://img.shields.io/node/v/%40steipete%2Fpeekaboo?style=flat-square)](https://nodejs.org/) [![License](https://img.shields.io/github/license/openclaw/Peekaboo?style=flat-square)](LICENSE) [![Homebrew](https://img.shields.io/badge/Homebrew-openclaw%2Ftap-b28f62?logo=homebrew&logoColor=white&style=flat-square)](https://github.com/openclaw/homebrew-tap) [![Ask DeepWiki](https://img.shields.io/badge/Ask-DeepWiki-0088cc?style=flat-square)](https://deepwiki.com/openclaw/Peekaboo)
 

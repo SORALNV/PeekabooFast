@@ -1,0 +1,42 @@
+{
+  "background_discord_status": "incomplete; two exploratory native sends verified under different prerequisites; no controlled background cohort",
+  "live_ui_tests": "resumed with explicit unattended permission, then stopped after confirmed Mac lock; manual unlock required",
+  "current_binary": {
+    "path": "/tmp/peekaboofast-current",
+    "sha256": "f27bfeefbfa625db3cc39f4d32d7948656dcc3227951435ff8c53ecf8c1b175b",
+    "gui_certified": false,
+    "build": "debug, arm64, Swift 6.4, macOS 26.6.2"
+  },
+  "checks": {
+    "build_cli": "passed after final source edits; exit 0",
+    "batch_regression_tests": {
+      "status": "passed",
+      "reported_cases": 13
+    },
+    "action_input_tests": {
+      "status": "passed",
+      "reported_cases": 91
+    },
+    "changed_swift_lint": "new bootstrap/inventory/batch files passed strict lint with zero violations; existing prompt warnings included in root count",
+    "root_swift_lint": "passed, 110 pre-existing non-serious warnings",
+    "swiftformat": "passed, 0/2107 require formatting",
+    "docs_lint": "passed",
+    "test_safe": "passed: 2391 reported Swift Testing tests plus script/Node checks; exit 0",
+    "core_regressions": "13 batch + 1 verification-budget tests passed; 29 prompt tests passed",
+    "kit_regressions": "31 Swift Testing + 20 XCTest tests passed; separate bootstrap/observation/classifier run: 49 passed",
+    "monitor": "Swift 6 compile passed; Python acceptance regressions 4/4 passed",
+    "locked_session_guard": "CLI inspect_ui reported locked prerequisite; read-only diagnostic, no mutation tool requested"
+  },
+  "historical_foreground_comparison": {
+    "path": "repeated-uninterrupted-2026-10-15",
+    "before_successes": 5,
+    "after_successes": 5,
+    "before_median_ms": 13198.541959,
+    "after_median_ms": 9484.281625,
+    "applies_to_current_binary": false
+  },
+  "experimental_native_single_click_delivery": "removed; never shipped",
+  "temporary_ui_cleanup": "no fixture window/process left; Discord hidden again with confirmed background native result",
+  "baseline_commit": "1e42f1d9053109d6d19e604504ea80bc229a88e8",
+  "implementation_sha256": "27c5bb358b5cef48fac77fe032363e47ed91cf1dda917bed35af3dd55d0a648d"
+}

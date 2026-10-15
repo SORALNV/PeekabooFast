@@ -1,0 +1,100 @@
+{
+  "read_only_monitor": true,
+  "poll_interval_ms": 100,
+  "target_pid": 24935,
+  "window_id": 144370,
+  "samples_in_trial_intervals": 1327,
+  "transitions": [
+    {
+      "timestamp": 1792041588.527658,
+      "ax_target_focused": true,
+      "target_frontmost": true,
+      "width": 868,
+      "height": 796,
+      "on_screen": true
+    }
+  ],
+  "trial_alignment": [
+    {
+      "trial": 1,
+      "version": "before",
+      "success": true,
+      "sample_count": 140,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 2,
+      "version": "after",
+      "success": true,
+      "sample_count": 118,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 3,
+      "version": "after",
+      "success": true,
+      "sample_count": 116,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 4,
+      "version": "before",
+      "success": true,
+      "sample_count": 147,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 5,
+      "version": "before",
+      "success": true,
+      "sample_count": 147,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 6,
+      "version": "after",
+      "success": true,
+      "sample_count": 118,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 7,
+      "version": "after",
+      "success": true,
+      "sample_count": 118,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 8,
+      "version": "before",
+      "success": true,
+      "sample_count": 152,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 9,
+      "version": "before",
+      "success": true,
+      "sample_count": 152,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    },
+    {
+      "trial": 10,
+      "version": "after",
+      "success": true,
+      "sample_count": 119,
+      "non_target_foreground_samples": 0,
+      "offscreen_samples": 0
+    }
+  ],
+  "orchestration": "One exec cell; no additional exec_command calls during the ten trials. Both versions retain all attempts."
+}

@@ -1,0 +1,48 @@
+{
+  "date_jst": "2026-10-15",
+  "test_safe": {
+    "command": "pnpm run test:safe",
+    "exit_code": 0,
+    "swift_testing_tests": 2391,
+    "additional_script_and_node_checks": "passed"
+  },
+  "focused_core": {
+    "command": "swift test --package-path Core/PeekabooCore --filter 'VerifyState|MCPBatchStateDiffTests'",
+    "exit_code": 0,
+    "swift_testing_tests": 73
+  },
+  "focused_automation_kit": {
+    "command": "swift test --package-path Core/PeekabooAutomationKit --filter 'DetachedExactWindowFocus|UIAutomationExactWindowFocusTests|FocusedElementReceiptResolverTests|AXKnownWindowCandidatesTests'",
+    "exit_code": 0,
+    "swift_testing_tests": 46,
+    "xctest_tests": 20
+  },
+  "format_check": {
+    "command": "swiftformat --lint .",
+    "exit_code": 0
+  },
+  "repository_lint": {
+    "command": "pnpm run lint",
+    "exit_code": 0,
+    "preexisting_warnings": 110,
+    "serious_violations": 0
+  },
+  "changed_file_lint": {
+    "swift_files": 33,
+    "violations": 0
+  },
+  "cli_build": {
+    "command": "pnpm run build:cli",
+    "exit_code": 0,
+    "retained_binary": "/tmp/peekaboo-after-final",
+    "sha256": "b758f64d1912300f687ff589b0b5bde6051c2e783a97a2db8b60abf11187d251"
+  },
+  "final_live_cohort": {
+    "path": "repeated-uninterrupted-2026-10-15",
+    "before_successes": 5,
+    "after_successes": 5,
+    "attempts_per_version": 5,
+    "cua_readback": "passed",
+    "stable_native_samples": 1327
+  }
+}

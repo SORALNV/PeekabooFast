@@ -51,7 +51,7 @@ public struct SystemExactWindowMetadataProvider: ExactWindowMetadataProviding {
                   expectedOwnerProcessIdentifier: identity.ownerProcessIdentifier,
                   expectedOwnerProcessStartIdentity: processStartIdentity,
                   expectedBounds: identity.bounds,
-                  isMinimized: !identity.isOnScreen) != nil
+                  isMinimized: identity.isOnScreen ? false : nil) != nil
         else {
             return nil
         }

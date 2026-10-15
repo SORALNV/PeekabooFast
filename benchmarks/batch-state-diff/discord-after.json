@@ -1,0 +1,12 @@
+{
+  "mode": "batch",
+  "elapsed_ms": 10414.640708,
+  "mcp_calls": 1,
+  "driver_steps": 11,
+  "verifications": 5,
+  "success": true,
+  "initial_state": "server",
+  "recipient": "たぬき",
+  "text": "Peekaboo benchmark after B",
+  "llm_included": false
+}

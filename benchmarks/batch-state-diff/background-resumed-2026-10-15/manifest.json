@@ -1,0 +1,72 @@
+{
+  "status": "exploratory only; no controlled background before/after cohort",
+  "trials": [
+    {
+      "trial": 1,
+      "binary_sha256": "fc48ff8af2ef010bf048efccdc7505ad71a73eb2ea4625db4bd276e3a49386e9",
+      "success": false,
+      "conditions": "enhanced AX requested; no focused receiver at type"
+    },
+    {
+      "trial": 2,
+      "binary_sha256": "fc48ff8af2ef010bf048efccdc7505ad71a73eb2ea4625db4bd276e3a49386e9",
+      "success": true,
+      "conditions": "CUA had previously established native editor focus; enhanced AX active"
+    },
+    {
+      "trial": 3,
+      "binary_sha256": "fc48ff8af2ef010bf048efccdc7505ad71a73eb2ea4625db4bd276e3a49386e9",
+      "success": false,
+      "conditions": "enhanced AX disabled; preparation failed"
+    },
+    {
+      "trial": 4,
+      "binary_sha256": "2f80f4a190137a384e8ab2daf6af8e0167744bc97ac50a855d15dfef29307c13",
+      "success": false,
+      "conditions": "experimental native singles; preparation failed before misspelled recipient query could execute"
+    },
+    {
+      "trial": 5,
+      "binary_sha256": "2f80f4a190137a384e8ab2daf6af8e0167744bc97ac50a855d15dfef29307c13",
+      "success": false,
+      "conditions": "experimental native singles, enhanced AX; preparation failed"
+    },
+    {
+      "trial": 6,
+      "binary_sha256": "83997b42ebb2ba8f68ffc5f887c4ec162d005cd35838ed199e0f6e55fd4aab7b",
+      "success": true,
+      "conditions": "experimental web focus route, enhanced AX; all click receipts actually used accessibility_action"
+    },
+    {
+      "trial": 7,
+      "binary_sha256": "caa09cae371bd719f49146bb8eeefd300582ffcd78380f38ad6808954aa3ae74",
+      "success": false,
+      "conditions": "first new-bootstrap pilot overlapped confirmed macOS lock; not a valid bootstrap effectiveness test"
+    }
+  ],
+  "successful_native_sends": 2,
+  "not_a_success_rate": "Different binaries and accessibility/focus prerequisites; do not pool",
+  "experimental_single_click_changes": "reverted; never shipped",
+  "cua_observation": {
+    "sent_text": "PeekabooFast CUA bg 02",
+    "sent_message_and_empty_composer_observed": true,
+    "front_pid_observed_during_input": 566,
+    "physical_pointer_observed_during_input": [
+      854.41796875,
+      604.796875
+    ],
+    "continuous_workspace_monitoring": false
+  },
+  "bootstrap_pilot_lock_evidence": {
+    "native_front_process": "loginwindow",
+    "native_front_pid": 173,
+    "cua_reported_locked": true
+  },
+  "infrastructure_events": [
+    {
+      "stage": "before GUI trial",
+      "error": "Missing copied binary; no MCP process or UI dispatch started"
+    }
+  ],
+  "private_ui_histories": "not included"
+}

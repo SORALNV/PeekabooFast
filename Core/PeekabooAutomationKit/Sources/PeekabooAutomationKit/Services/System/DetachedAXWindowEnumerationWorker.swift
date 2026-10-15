@@ -117,7 +117,7 @@ enum DetachedAXWindowEnumerationWorker {
         }
         let windowsRead = self.rawAttributeRead(kAXWindowsAttribute, of: application, deadline: deadline)
         guard windowsRead.error == .success,
-              let windows = windowsRead.value as? [AXUIElement]
+              let listedWindows = windowsRead.value as? [AXUIElement]
         else {
             try self.validateIdentity(request)
             let incomplete = windowsRead.error == .success ||
@@ -133,6 +133,10 @@ enum DetachedAXWindowEnumerationWorker {
                 reportedWindowCount: 0)
         }
 
+        let windows = AXKnownWindowCandidates.supplement(
+            listed: listedWindows, application: application, deadline: deadline)
+        let usedFallback = listedWindows.isEmpty && !windows.isEmpty
+
         let focusedWindowRead = self.elementAttribute(
             kAXFocusedWindowAttribute,
             of: application,
@@ -147,7 +151,7 @@ enum DetachedAXWindowEnumerationWorker {
         let limit = max(0, request.maximumWindowCount)
         var descriptors: [DetachedAXWindowDescriptor] = []
         descriptors.reserveCapacity(min(windows.count, limit))
-        var incomplete = focusedWindowRead.incomplete || focusedWindowIDRead.incomplete
+        var incomplete = usedFallback || focusedWindowRead.incomplete || focusedWindowIDRead.incomplete
         var timedOut = false
 
         for window in windows.prefix(limit) {
@@ -183,7 +187,7 @@ enum DetachedAXWindowEnumerationWorker {
             focusedWindowID: focusedWindowID,
             timedOut: timedOut,
             incomplete: incomplete,
-            reportedWindowCount: windows.count)
+            reportedWindowCount: listedWindows.count)
     }
 
     static func validateIdentity(

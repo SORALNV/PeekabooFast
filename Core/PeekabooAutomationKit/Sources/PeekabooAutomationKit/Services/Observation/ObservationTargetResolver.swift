@@ -258,7 +258,7 @@ public final class ObservationTargetResolver: ObservationTargetResolving {
             windowID: Int(identity.windowID),
             title: identity.title,
             bounds: identity.bounds,
-            isMinimized: !identity.isOnScreen,
+            isMinimized: false,
             isMainWindow: false,
             windowLevel: identity.layer,
             alpha: identity.alpha,
@@ -274,7 +274,7 @@ public final class ObservationTargetResolver: ObservationTargetResolving {
                     ownerProcessIdentifier: identity.ownerProcessIdentifier,
                     ownerProcessStartIdentity: $0,
                     capturedBounds: identity.bounds,
-                    isMinimized: !identity.isOnScreen)
+                    isMinimized: identity.isOnScreen ? false : nil)
             })
     }
 

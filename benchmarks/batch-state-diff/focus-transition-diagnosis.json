@@ -1,0 +1,18 @@
+{
+  "focus": true,
+  "server_preparation": {
+    "satisfied": true,
+    "summary": "Verification satisfied after 3 sample(s) in 0.674s.\nApplication: Discord (PID 24935)\nWindow: 144370 \"#twitter | 自作erの集い - Discord\"\nPredicates:\n1. element_exists: satisfied — label=自作erの集い、サーバー操作, role=AXButton; observed count=1"
+  },
+  "switch_away_returncode": 0,
+  "click_state": "dispatched_unverified",
+  "background_readback": {
+    "satisfied": false,
+    "summary": "Verification unknown after 13 sample(s) in 3.000s.\nApplication: Discord (PID 24935)\nReason: Verification deadline has insufficient time for a fresh accessibility traversal\nPredicates:\n1. element_exists: unknown — Verification deadline has insufficient time for a fresh accessibility traversal"
+  },
+  "focus_back": true,
+  "readback_without_replaying_click": {
+    "satisfied": true,
+    "summary": "Verification satisfied after 2 sample(s) in 0.510s.\nApplication: Discord (PID 24935)\nWindow: 144370 \"@たぬき - Discord\"\nPredicates:\n1. element_exists: satisfied — label=フレンド, role=AXLink; observed count=1"
+  }
+}

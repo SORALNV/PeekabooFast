@@ -1,0 +1,18 @@
+{
+  "mode": "sequential",
+  "elapsed_ms": 11796.574292,
+  "mcp_calls": 17,
+  "driver_steps": 12,
+  "verifications": 5,
+  "success": true,
+  "initial_state": "server",
+  "recipient": "たぬき",
+  "text": "Peekaboo f927ebcf A01",
+  "llm_included": false,
+  "composer_empty": true,
+  "trial": 1,
+  "version": "before",
+  "exit_code": 0,
+  "trial_started_at_unix_seconds": 1792041359.594485,
+  "trial_finished_at_unix_seconds": 1792041374.93823
+}

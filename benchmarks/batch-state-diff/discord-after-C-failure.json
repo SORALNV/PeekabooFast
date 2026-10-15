@@ -1,0 +1,13 @@
+{
+  "success": false,
+  "mode": "batch",
+  "stage": "type",
+  "completed_steps": 8,
+  "total_steps": 11,
+  "send_step_attempted": false,
+  "state": "indeterminate",
+  "dispatched_unit_count": 15,
+  "reason": "Exact-window keyboard focus was lost at dispatch; the batch stopped without retrying the action.",
+  "plan": "initial background typing plan",
+  "record_source": "Observed tool failure summary; private UI history excluded"
+}

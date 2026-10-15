@@ -31,7 +31,7 @@ extension WindowManagementService {
         }
         let appElement = AXApp(runningApp).element
 
-        guard let windows = appElement.windows() else {
+        guard let windows = AXKnownWindowCandidates.elements(application: appElement, timeout: 1) else {
             throw NotFoundError.window(app: app.name)
         }
 
@@ -63,7 +63,7 @@ extension WindowManagementService {
         else { return nil }
         let appElement = AXApp(runningApp).element
 
-        guard let windows = appElement.windows() else { return nil }
+        guard let windows = AXKnownWindowCandidates.elements(application: appElement, timeout: 1) else { return nil }
         for window in windows where window.title()?.localizedCaseInsensitiveContains(titleSubstring) == true {
             let elapsed = Date().timeIntervalSince(startTime)
             self.logger.info("Found window in frontmost app after \(elapsed)s")
@@ -91,7 +91,7 @@ extension WindowManagementService {
             guard let runningApp = NSRunningApplication(processIdentifier: app.processIdentifier) else { continue }
             let appElement = AXApp(runningApp).element
 
-            guard let windows = appElement.windows() else { continue }
+            guard let windows = AXKnownWindowCandidates.elements(application: appElement, timeout: 1) else { continue }
             totalWindows += windows.count
 
             if searchedApps % 5 == 0 {

@@ -209,7 +209,9 @@ extension WindowManagementService {
         }
         let appElement = AXApp(runningApp).element
 
-        guard let windows = appElement.windows(), !windows.isEmpty else {
+        guard let windows = AXKnownWindowCandidates.elements(application: appElement, timeout: 1),
+              !windows.isEmpty
+        else {
             throw NotFoundError.window(app: app.name)
         }
 
@@ -227,7 +229,7 @@ extension WindowManagementService {
         }
         let appElement = AXApp(runningApp).element
 
-        guard let windows = appElement.windows() else {
+        guard let windows = AXKnownWindowCandidates.elements(application: appElement, timeout: 1) else {
             throw NotFoundError.window(app: app.name)
         }
 
@@ -300,7 +302,7 @@ extension WindowManagementService {
             guard let runningApp = NSRunningApplication(processIdentifier: app.processIdentifier) else { continue }
             let appElement = AXApp(runningApp).element
 
-            guard let windows = appElement.windows() else { continue }
+            guard let windows = AXKnownWindowCandidates.elements(application: appElement, timeout: 1) else { continue }
             for window in windows {
                 if let windowID = self.windowIdentityService.getWindowID(from: window),
                    Int(windowID) == id
@@ -415,10 +417,12 @@ enum BoundedAXWindowIdentityScanner {
             }
             return windowsValue as? [AXUIElement]
         }
-        guard let windows else { return nil }
+        guard let listedWindows = windows else { return nil }
+        let candidates = AXKnownWindowCandidates.supplement(
+            listed: listedWindows, application: application, deadline: deadline)
 
         guard let snapshot = self.scanWindows(
-            windows,
+            candidates,
             remainingTimeout: { self.remainingCallTimeout(until: deadline) },
             applyTimeout: { AXUIElementSetMessagingTimeout($0, $1) },
             snapshot: { childWindow in

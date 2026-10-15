@@ -9,6 +9,66 @@ struct DetachedExactWindowFocusWindowTests {
     private let second = AXUIElementCreateApplication(-102)
     private let third = AXUIElementCreateApplication(-103)
 
+    @Test func `empty successful inventory uses exact known window fallback`() throws {
+        let result = DetachedExactWindowFocusReader.targetWindow(
+            expectedWindowID: 42,
+            inventory: .init(error: .success, value: []),
+            fallbackWindows: { [self.first, self.second] },
+            copyWindowID: { element, id in id = CFEqual(element, self.second) ? 42 : 99; return .success })
+        #expect(try CFEqual(result.get(), self.second))
+    }
+
+    @Test func `nonempty or failed inventory never calls fallback`() {
+        for error in [AXError.success, .cannotComplete] {
+            _ = DetachedExactWindowFocusReader.targetWindow(
+                expectedWindowID: 42,
+                inventory: .init(error: error, value: [self.first]),
+                fallbackWindows: { Issue.record("Unexpected fallback"); return [] },
+                copyWindowID: { _, id in id = 42; return .success })
+        }
+    }
+
+    @Test func `live focus shortcut preserves exact receiver checks`() {
+        let frame = CGRect(x: 10, y: 20, width: 100, height: 30)
+        let expected = FocusedElementIdentity(
+            processIdentifier: 42,
+            windowID: 7,
+            role: "AXTextArea",
+            title: "Input",
+            identifier: "composer",
+            frame: frame)
+        func snapshot(
+            pid: Int32 = 42,
+            window: Int? = 7,
+            role: String = "AXTextArea",
+            identifier: String = "composer",
+            bounds: CGRect? = nil) -> ExactWindowFocusSnapshot
+        {
+            ExactWindowFocusSnapshot(
+                processIdentifier: pid,
+                windowID: window,
+                frame: bounds ?? frame,
+                role: role,
+                title: "Input",
+                identifier: identifier,
+                nativeElement: RetainedFocusElement(element: self.first))
+        }
+        #expect(DetachedExactWindowFocusReader.matchesLiveReceiver(snapshot(), expected: expected, phase: .initial))
+        for invalid in [
+            snapshot(pid: 43),
+            snapshot(window: 8),
+            snapshot(window: nil),
+            snapshot(role: "AXButton"),
+            snapshot(identifier: "other"),
+            snapshot(bounds: .zero),
+        ] {
+            #expect(!DetachedExactWindowFocusReader.matchesLiveReceiver(invalid, expected: expected, phase: .initial))
+        }
+        let moved = snapshot(bounds: CGRect(x: 10, y: 15, width: 100, height: 35))
+        #expect(!DetachedExactWindowFocusReader.matchesLiveReceiver(moved, expected: expected, phase: .initial))
+        #expect(DetachedExactWindowFocusReader.matchesLiveReceiver(moved, expected: expected, phase: .continuation))
+    }
+
     @Test(arguments: [
         AXError.cannotComplete,
         .invalidUIElement,

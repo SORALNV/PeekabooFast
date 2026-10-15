@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "PeekabooFast native route 06",
+  "phase": "preparation",
+  "error": "{'is_error': False, 'tool': None, 'meta': {}, 'message': 'Verification unknown after 27 sample(s) in 10.001s.\\nApplication: Discord (PID 24935)\\nReason: Verification deadline has insufficient time for a fresh accessibility traversal\\nPredicates:\\n1. element_exists: unknown — Verification deadline has insufficient time for a fresh accessibility traversal', 'verification': None}",
+  "exploratory_trial": 4,
+  "conditions": "experimental native singles; preparation failed before misspelled recipient query could execute",
+  "controlled_comparison": false,
+  "workspace_preservation_certified": false
+}

@@ -90,6 +90,10 @@ struct WindowRoutedApplicationClassifier {
         return importsWebKit || importsKnownSafari
     }
 
+    static func isElectron(_ application: NSRunningApplication) -> Bool {
+        Self(application: application).kind == .electron
+    }
+
     static func pointerTransport(processIdentifier: pid_t) -> WindowRoutedPointerTransport {
         guard let application = NSRunningApplication(processIdentifier: processIdentifier) else {
             return .publicCGEvent

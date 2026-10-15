@@ -57,12 +57,15 @@ enum MCPToolRequestSemantics {
 
 enum MCPToolCaptureRequirement: Sendable, Equatable {
     case never
+    case delegated
     case always
     case liveCaptureSource
     case requestedFinalScreenshot
 
     static func profile(toolName: String) -> MCPToolCaptureRequirement? {
         switch toolName {
+        case "execute_steps":
+            .delegated
         case "see", "image":
             .always
         case "capture":
@@ -71,7 +74,7 @@ enum MCPToolCaptureRequirement: Sendable, Equatable {
             .requestedFinalScreenshot
         case "analyze", "browser", "permissions", "sleep", "inspect_ui", "click", "type", "set_value", "select_text",
              "action", "scroll", "press", "drag", "move", "app", "window", "menu", "clipboard", "paste",
-             "agent", "dock", "dialog", "space":
+             "agent", "dock", "dialog", "space", "get_state_diff":
             .never
         default:
             nil
@@ -80,7 +83,7 @@ enum MCPToolCaptureRequirement: Sendable, Equatable {
 
     static func requiresPixels(toolName: String, arguments: ToolArguments) -> Bool? {
         switch self.profile(toolName: toolName) {
-        case .never:
+        case .never, .delegated:
             false
         case .always:
             true
@@ -439,7 +442,7 @@ enum MCPToolSnapshotMutationPolicy {
         case "agent":
             // Nested agent tools acquire this gate themselves; locking the outer call would deadlock.
             MCPToolSnapshotEffect.none
-        case "analyze", "sleep":
+        case "analyze", "sleep", "execute_steps", "get_state_diff":
             MCPToolSnapshotEffect.none
         default:
             nil

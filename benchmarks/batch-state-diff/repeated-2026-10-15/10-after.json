@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "mode": "batch",
+  "text": "Peekaboo 12056573 B10",
+  "phase": "preparation",
+  "error": "{'is_error': False, 'tool': None, 'meta': {}, 'message': 'Verification unknown after 97 sample(s) in 10.001s.\\nApplication: Discord (PID 24935)\\nReason: Pinned window 144370 verification receipt changed because its bounds changed from ID 144370, PID 24935, generation 1790525405392460, bounds (0.0, 316.0, 868.0, 796.0) to ID 144370, PID 24935, generation 1790525405392460, bounds (60.0, 655.0, 335.0, 307.0); the public WindowServer API exposes no stronger window-incarnation token\\nPredicates:\\n1. element_exists: unknown — Pinned window 144370 verification receipt changed because its bounds changed from ID 144370, PID 24935, generation 1790525405392460, bounds (0.0, 316.0, 868.0, 796.0) to ID 144370, PID 24935, generation 1790525405392460, bounds (60.0, 655.0, 335.0, 307.0); the public WindowServer API exposes no stronger window-incarnation token', 'verification': None}",
+  "trial": 10,
+  "version": "after",
+  "exit_code": 1
+}

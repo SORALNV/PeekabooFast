@@ -56,6 +56,8 @@ final class UIAutomationExactWindowFocusTests: XCTestCase {
             XCTFail("Expected exact-window validation timeout")
         } catch let PeekabooError.invalidInput(message) {
             XCTAssertTrue(message.contains("target"))
+            XCTAssertTrue(message.contains("focus observation failed"))
+            XCTAssertFalse(message.contains("focus is not on the target window"))
         }
         XCTAssertLessThan(Self.seconds(start.duration(to: .now)), 0.5)
     }

@@ -8,6 +8,10 @@ import Foundation
 /// Formatter for UI automation tools with comprehensive result formatting
 public class UIAutomationToolFormatter: BaseToolFormatter {
     override public func formatCompactSummary(arguments: [String: Any]) -> String {
+        if self.toolType == .executeSteps {
+            let count = (arguments["steps"] as? [[String: Any]])?.count ?? 0
+            return "\(count) steps"
+        }
         guard self.toolType == .paste else {
             return super.formatCompactSummary(arguments: arguments)
         }
@@ -28,6 +32,14 @@ public class UIAutomationToolFormatter: BaseToolFormatter {
 
     override public func formatResultSummary(result: [String: Any]) -> String {
         switch toolType {
+        case .executeSteps:
+            if let completed = ToolResultExtractor.int("completed", from: result),
+               let total = ToolResultExtractor.int("total", from: result)
+            {
+                "→ \(completed)/\(total) steps"
+            } else {
+                ""
+            }
         case .click:
             self.formatClickResult(result)
         case .type:

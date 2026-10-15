@@ -1,0 +1,16 @@
+{
+  "mode": "sequential",
+  "elapsed_ms": 10922.600292,
+  "mcp_calls": 17,
+  "driver_steps": 12,
+  "verifications": 5,
+  "success": true,
+  "initial_state": "server",
+  "recipient": "たぬき",
+  "text": "Peekaboo repeat A08",
+  "llm_included": false,
+  "composer_empty": true,
+  "trial": 8,
+  "version": "before",
+  "exit_code": 0
+}

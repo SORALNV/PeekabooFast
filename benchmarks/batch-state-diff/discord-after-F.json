@@ -1,0 +1,7 @@
+{
+  "success": false,
+  "mode": "batch",
+  "text": "Peekaboo benchmark after  F",
+  "error": "{'is_error': True, 'tool': 'click', 'meta': {'requires_fresh_observation': True, 'invalidated_snapshot': 'ps1_33f4f000b613de017c8f10781d9b56fd', 'state': 'dispatched_unverified', 'delivery_mechanism': 'accessibility_action', 'target_identity': {'window_id': 144370, 'pid': 24935, 'kind': 'window', 'process_start_identity_decimal': '1790525405392460'}, 'target_receipt': {'pid': 24935, 'window_id': 144370, 'process_start_identity_decimal': '1790525405392460', 'process_start_identity': 1790525405392460}, 'evidence': 'delivery_accepted', 'click_type': 'single', 'retry_safety': 'unsafe', 'mutation_dispatched': True, 'dispatch_state': 'dispatched', 'escalation': 'observe_before_retry', 'effect': 'unverifiable', 'retry_safe': False, 'delivery_mode': 'background', 'route': 'local', 'dispatched_unit_count': 1}, 'message': 'Click did not return a confirmed outcome. Follow the canonical escalation metadata before deciding whether to retry.'}",
+  "elapsed_ms": 10935.993792
+}

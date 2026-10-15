@@ -125,8 +125,14 @@ extension UIAutomationService {
                 field: "target",
                 reason: "Exact focused-element receipt is stale: \(reason) " + BackgroundKeyboardFocusRemediation
                     .message)
+        } catch is CancellationError {
+            throw CancellationError()
         } catch {
-            throw self.exactWindowKeyboardFocusChangedError()
+            // A failed/expired observation does not prove that keyboard focus physically moved.
+            throw PeekabooError.invalidInput(
+                field: "target",
+                reason: "Exact-window keyboard focus observation failed: \(error.localizedDescription) " +
+                    BackgroundKeyboardFocusRemediation.message)
         }
         guard let focused,
               focused.processIdentifier == targetProcessIdentifier,

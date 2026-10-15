@@ -4,6 +4,19 @@ import Testing
 
 struct DesktopSessionLockStateTests {
     @Test
+    func `locked AX observations report the session prerequisite instead of a focus timeout`() {
+        #expect(throws: (any Error).self) {
+            try DesktopSessionLockState.requireUnlockedForAccessibility(true)
+        }
+    }
+
+    @Test
+    func `unlocked and unavailable lock evidence preserve normal AX observation`() throws {
+        try DesktopSessionLockState.requireUnlockedForAccessibility(false)
+        try DesktopSessionLockState.requireUnlockedForAccessibility(nil)
+    }
+
+    @Test
     func `reports locked when the native session dictionary says locked`() {
         let session: NSDictionary = ["CGSSessionScreenIsLocked": true]
 

@@ -515,7 +515,7 @@ test("initial observed focus probe reserves the existing traversal deadline thro
   assert.equal(initialProbe.match(/self\.initialFocusedReference\(/g)?.length, 1);
   assert.doesNotMatch(initialProbe, /advanced\(by:|\.now|focusedReference\(application: application, deadline:/);
   assert.match(worker, /var state = TraversalState\(\)\s*self\.process\(\s*window,\s*request: TraversalRequest\(\s*depth: 0,\s*deadline: deadline,/);
-  assert.match(worker, /readCurrentReference: \{ self\.focusedReference\(application: application, deadline: deadline\) \}/);
+  assert.match(worker, /readCurrentReference:\s*\{\s*self\.focusedReference\(\s*application: application,\s*deadline: deadline\)\s*\}/);
   assert.match(worker, /if request\.includeMenuBarElements, request\.appIsActive,\s*let menuBar = self\.readApplicationReference\(\s*deadline: deadline,\s*applyTimeout: \{ AXUIElementSetMessagingTimeout\(application, \$0\) == \.success \},\s*read: \{ self\.elementAttribute\(kAXMenuBarAttribute, of: application\) \}\)/);
   assert.match(worker, /private static func focusedReference\(\s*application: AXUIElement,\s*deadline: ContinuousClock\.Instant\) -> AXUIElement\?\s*\{\s*self\.readApplicationReference\(/);
   const proof = readFileSync(

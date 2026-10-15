@@ -211,11 +211,12 @@ struct ElementDetectionWindowResolver {
             let timeout = Float(min(max(context?.accessibilityTimeoutSeconds ?? 1, 0.05), 1))
             appElement.setMessagingTimeout(timeout)
             defer { appElement.setMessagingTimeout(0) }
-            let matchingWindow = appElement.windowsWithTimeout(timeout: timeout)?.first { window in
-                self.windowIdentityService.getWindowID(
-                    from: window,
-                    messagingTimeout: min(timeout, 0.25)) == cgWindowID
-            }
+            let matchingWindow = AXKnownWindowCandidates.elements(application: appElement, timeout: timeout)?
+                .first { window in
+                    self.windowIdentityService.getWindowID(
+                        from: window,
+                        messagingTimeout: min(timeout, 0.25)) == cgWindowID
+                }
             if let window = matchingWindow {
                 window.setMessagingTimeout(min(timeout, 0.25))
                 defer { window.setMessagingTimeout(0) }
@@ -234,7 +235,7 @@ struct ElementDetectionWindowResolver {
 
         // Chrome and other multi-process apps occasionally return an empty window list unless we set
         // an explicit AX messaging timeout, so prefer the guarded helper.
-        let axWindows = appElement.windowsWithTimeout() ?? []
+        let axWindows = AXKnownWindowCandidates.elements(application: appElement, timeout: 2) ?? []
         self.logger.debug("Found \(axWindows.count) windows for \(app.localizedName ?? "app")")
 
         let renderableWindows = self.renderableWindows(from: axWindows)

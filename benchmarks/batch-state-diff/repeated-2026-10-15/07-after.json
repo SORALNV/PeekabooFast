@@ -1,0 +1,11 @@
+{
+  "success": false,
+  "mode": "batch",
+  "text": "Peekaboo 12056573 B07",
+  "phase": "timed_workload",
+  "error": "{'is_error': True, 'tool': 'type', 'meta': {'dispatch_state': 'none', 'escalation': 'refresh_target', 'effect': 'refused', 'retry_safety': 'safe', 'requires_fresh_observation': False, 'evidence': 'request_refused', 'retry_safe': True, 'state': 'refused', 'mutation_dispatched': False}, 'message': \"Invalid input: Invalid target: The exact target window reports no focused element. Background keystrokes follow the application's own keyboard focus and cannot be aimed at a window that does not hold it; such a window also refuses accessibility focus requests, so no amount of retrying moves focus there in the background. To write into this window without focusing it, observe it and set its editable element's accessibility value (`set-value` command, `set_value` tool). Use foreground delivery only when the window may take focus.\", 'verification': None}",
+  "elapsed_ms": 6344.263125,
+  "trial": 7,
+  "version": "after",
+  "exit_code": 1
+}

@@ -1,0 +1,8 @@
+{
+  "is_error": true,
+  "reports_locked_session": true,
+  "message": "Failed to inspect UI: Accessibility observation is unavailable while the macOS GUI session is locked. Unlock the Mac manually before retrying; no focus or input workaround was attempted.",
+  "mutation_dispatched_metadata": null,
+  "workload": "inspect_ui only; no mutation tool requested",
+  "binary_sha256": "8991a88a9a17ea18f2d503a32b8057de6b87d09fb91da295b0f1cc31f5d168b7"
+}

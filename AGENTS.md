@@ -1,5 +1,12 @@
 # Repository Guidelines
 
+## Non-disruptive automation and testing
+- Preserve the user's foreground application, keyboard receiver, physical pointer, window order, and Space by default.
+- Do not open or focus a test fixture, raise/unhide Discord, or switch Spaces to make a background trial pass while the user is working. Preparation effects count as interference even when excluded from speed timings.
+- A user's explicit unattended testing interval allows its scoped diagnostic UI work for that interval only. It does not change the product's default background behavior or turn foreground diagnostics into background success evidence. Stop interfering UI work when the user returns or reports obstruction.
+- Use read-only native monitoring and exact-target verification. Record failed trials, foreground changes, and occlusion honestly; do not retry failed trials into a success rate or claim an AX draft value proves delivery.
+- Remove your temporary test UI/processes after testing and keep private UI histories outside the repository. Continue source work and safe automated tests when live UI interaction is unavailable.
+
 ## Start Here
 - Read `~/Projects/agent-scripts/{AGENTS.MD,TOOLS.MD}` before making changes (skip if missing).
 - This repo uses git submodules (`AXorcist/`, `Commander/`, `Swiftdansi/`, `Tachikoma/`, `TauTUI/`); update them in their home repos first, then bump pointers here.

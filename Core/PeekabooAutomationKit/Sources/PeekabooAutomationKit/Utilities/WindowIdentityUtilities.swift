@@ -124,9 +124,8 @@ public final class WindowIdentityService {
         messagingTimeout: Float) -> AXWindowHandle?
     {
         let appElement = Element(AXUIElementCreateApplication(app.processIdentifier))
-        guard let windows = try? appElement.withMessagingTimeout(
-            messagingTimeout,
-            operation: { $0.windows() })
+        guard let windows = AXKnownWindowCandidates.elements(
+            application: appElement, timeout: messagingTimeout)
         else {
             return nil
         }

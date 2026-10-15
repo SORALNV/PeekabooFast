@@ -171,8 +171,39 @@ struct ActionInputDriver: ActionInputDriving {
         allowAccessibilityValueFallback: Bool,
         beforeMutation: @MainActor () throws -> Void = {}) async throws -> UIInputExecutionResult.Action
     {
+        try await self.clickElement(
+            element, allowAccessibilityValueFallback: allowAccessibilityValueFallback, beforeMutation: beforeMutation)
+    }
+
+    private func clickElement(
+        _ element: any AutomationElementRepresenting,
+        allowAccessibilityValueFallback: Bool,
+        beforeMutation: @MainActor () throws -> Void) async throws -> UIInputExecutionResult.Action
+    {
         do {
             return try self.performAction(AXActionNames.kAXPressAction, on: element, beforeMutation: beforeMutation)
+        } catch let error as ActionInputError
+            where error == .unsupported(.actionUnsupported) && allowAccessibilityValueFallback &&
+            element.role == kAXRowRole && element.isEnabled && element.isSelectedSettable
+        {
+            // Electron sidebar rows can expose writable AXSelected without advertising AXPress.
+            // Select the resolved owner-checked element directly; no desktop hit test or focus switch.
+            try Task.checkCancellation()
+            if element.selectedValue == true {
+                return UIInputExecutionResult.Action(
+                    outcome: .confirmedNoChange(),
+                    actionName: kAXSelectedAttribute,
+                    anchorPoint: element.anchorPoint,
+                    elementRole: element.role)
+            }
+            try Self.validateBeforeMutation(beforeMutation)
+            try element.setAutomationSelected(true)
+            return UIInputExecutionResult.Action(
+                outcome: .dispatchedUnverified(
+                    delivery: Self.accessibilityValueDelivery, evidence: .deliveryAccepted, unitCount: .one),
+                actionName: kAXSelectedAttribute,
+                anchorPoint: element.anchorPoint,
+                elementRole: element.role)
         } catch let error as ActionInputError
             where error == .unsupported(.actionUnsupported) &&
             allowAccessibilityValueFallback &&
@@ -1481,19 +1512,8 @@ extension ActionInputDriver {
         allowAccessibilityValueFallback: Bool = true,
         beforeMutation: @MainActor () throws -> Void = {}) async throws -> UIInputExecutionResult.Action
     {
-        do {
-            return try self.performAction(AXActionNames.kAXPressAction, on: element, beforeMutation: beforeMutation)
-        } catch let error as ActionInputError
-            where error == .unsupported(.actionUnsupported) &&
-            allowAccessibilityValueFallback &&
-            Self.canFocusForClick(
-                role: element.role,
-                subrole: element.subrole,
-                isValueSettable: element.isValueSettable,
-                isFocusedSettable: element.isFocusedSettable)
-        {
-            return try await self.focusForClick(element, beforeMutation: beforeMutation)
-        }
+        try await self.clickElement(
+            element, allowAccessibilityValueFallback: allowAccessibilityValueFallback, beforeMutation: beforeMutation)
     }
 
     func trySetValueForTesting(

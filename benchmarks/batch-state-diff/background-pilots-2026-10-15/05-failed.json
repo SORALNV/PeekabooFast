@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "PeekabooFast background pilot 06",
+  "phase": "preparation",
+  "error": "{'is_error': False, 'tool': None, 'meta': {}, 'message': 'Verification unknown after 34 sample(s) in 10.001s.\\nApplication: Discord (PID 24935)\\nWindow: 144370 \"@たぬき - Discord\"\\nReason: Accessibility traversal was truncated: Warning: AX tree truncated at time deadline. Retry with an exact app_target and window_id; this tool does not expose a timeout argument.\\nPredicates:\\n1. element_exists: unknown — Accessibility traversal was truncated: Warning: AX tree truncated at time deadline. Retry with an exact app_target and window_id; this tool does not expose a timeout argument.', 'verification': None}",
+  "pilot": 5,
+  "experimental_binary": "v3"
+}

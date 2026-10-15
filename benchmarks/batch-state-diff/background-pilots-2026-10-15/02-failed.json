@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "PeekabooFast background pilot 03",
+  "phase": "preparation",
+  "error": "{'is_error': True, 'tool': None, 'meta': {'dispatch_state': 'may_have_dispatched', 'effect': 'unverifiable', 'escalation': 'observe_before_retry', 'evidence': 'completion_unknown', 'mutation_dispatched': True, 'requires_fresh_observation': True, 'retry_safe': False, 'retry_safety': 'unsafe', 'state': 'indeterminate'}, 'message': 'The click mutation returned without valid canonical result semantics. Observe the intended target before retrying and update the runtime host.', 'verification': None}",
+  "pilot": 2,
+  "experimental_binary": "v1"
+}

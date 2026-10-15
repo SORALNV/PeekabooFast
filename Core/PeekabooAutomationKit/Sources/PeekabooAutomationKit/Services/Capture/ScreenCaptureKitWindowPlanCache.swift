@@ -202,7 +202,7 @@ struct ScreenCaptureWindowPlanReceipt: Equatable {
             ownerProcessIdentifier: self.ownerProcessIdentifier,
             ownerProcessStartIdentity: self.ownerProcessStartIdentity,
             capturedBounds: self.bounds,
-            isMinimized: !self.isOnScreen)
+            isMinimized: self.isOnScreen ? false : nil)
     }
 
     static func make(identity: SystemWindowIdentity) -> ScreenCaptureWindowPlanReceipt? {

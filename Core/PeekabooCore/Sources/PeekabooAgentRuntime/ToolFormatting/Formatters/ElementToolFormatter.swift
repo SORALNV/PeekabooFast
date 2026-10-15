@@ -9,6 +9,8 @@ import Foundation
 public class ElementToolFormatter: BaseToolFormatter {
     override public func formatCompactSummary(arguments: [String: Any]) -> String {
         switch toolType {
+        case .getStateDiff:
+            return "retained snapshots"
         case .selectText:
             let mode = arguments["selection_type"] as? String ?? "text"
             let target = arguments["on"] as? String ?? "element"
@@ -36,6 +38,8 @@ public class ElementToolFormatter: BaseToolFormatter {
 
     override public func formatResultSummary(result: [String: Any]) -> String {
         switch toolType {
+        case .getStateDiff:
+            self.formatStateDiffResult(result)
         case .setValue:
             self.formatSetValueResult(result)
         case .performAction:
@@ -51,6 +55,13 @@ public class ElementToolFormatter: BaseToolFormatter {
         default:
             super.formatResultSummary(result: result)
         }
+    }
+
+    private func formatStateDiffResult(_ result: [String: Any]) -> String {
+        let added: [[String: Any]] = ToolResultExtractor.array("added", from: result) ?? []
+        let removed: [[String: Any]] = ToolResultExtractor.array("removed", from: result) ?? []
+        let changed: [[String: Any]] = ToolResultExtractor.array("changed", from: result) ?? []
+        return "→ +\(added.count) −\(removed.count) ~\(changed.count) elements"
     }
 
     private func formatSetValueResult(_ result: [String: Any]) -> String {

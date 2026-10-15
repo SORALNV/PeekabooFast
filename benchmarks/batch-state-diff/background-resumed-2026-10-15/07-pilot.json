@@ -1,0 +1,12 @@
+{
+  "success": false,
+  "mode": "batch",
+  "background_only": true,
+  "text": "PeekabooFast bootstrap 09",
+  "phase": "preparation",
+  "error": "{'is_error': True, 'tool': None, 'meta': {'error_code': 'ACCESSIBILITY_INCOMPLETE', 'mutation_dispatched': False, 'retry_safe': True}, 'message': 'Failed to inspect UI: Warning: AX tree incomplete at incomplete accessibility read. Retry once with the same exact app_target and window_id. If the exact target is a transient sheet without an independent AX-window identity, inspect the owning app_target without window_id for read-only dialog elements. Partial app-tree evidence does not provide a reusable snapshot or mutation authority. Use screenshot/OCR evidence for other persistent failures.', 'verification': None}",
+  "exploratory_trial": 7,
+  "conditions": "first new-bootstrap pilot overlapped confirmed macOS lock; not a valid bootstrap effectiveness test",
+  "controlled_comparison": false,
+  "workspace_preservation_certified": false
+}

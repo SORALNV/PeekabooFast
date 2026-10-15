@@ -62,10 +62,9 @@ extension VerifyStateTool {
 
         repeat {
             try Task.checkCancellation()
-            let remainingSeconds = max(Self.seconds(timing.clock.now.duration(to: timing.deadline)), 0.05)
             let sample = await self.sample(
                 request,
-                remainingSeconds: remainingSeconds,
+                deadline: timing.deadline,
                 identityTracker: identityTracker)
             // A sample proves state only at completion. Never let a result that crossed
             // the monotonic deadline contribute to stability or become the terminal sample.
@@ -147,7 +146,7 @@ extension VerifyStateTool {
 
     private func sample(
         _ request: VerifyStateRequest,
-        remainingSeconds: TimeInterval,
+        deadline: ContinuousClock.Instant,
         identityTracker: VerifyStateTargetIdentityTracker) async -> VerifyStateSample
     {
         let applicationResolution = await self.resolveApplication(request.target)
@@ -165,12 +164,15 @@ extension VerifyStateTool {
             case let .resolved(resolved):
                 resolvedApplication = resolved
             case let .unknown(reason):
-                return Self.unknownSample(request: request, application: application, reason: reason)
+                return Self.unknownSample(
+                    request: request,
+                    application: application,
+                    reason: reason)
             }
             let windowResolution = await self.resolveWindow(
                 request: request,
                 application: resolvedApplication,
-                remainingSeconds: remainingSeconds,
+                remainingSeconds: max(Self.seconds(ContinuousClock.now.duration(to: deadline)), 0),
                 identityTracker: identityTracker)
             let window: ServiceWindowInfo
             switch windowResolution {
@@ -182,7 +184,10 @@ extension VerifyStateTool {
                     application: application,
                     reason: reason)
             case let .unknown(reason):
-                return Self.unknownSample(request: request, application: application, reason: reason)
+                return Self.unknownSample(
+                    request: request,
+                    application: application,
+                    reason: reason)
             }
 
             guard request.needsAccessibilityTree else {
@@ -193,6 +198,14 @@ extension VerifyStateTool {
                     accessibilityEvidence: nil)
             }
 
+            // Target resolution also consumes the hard deadline. Never grant a traversal the
+            // stale budget from the beginning of this sample or round a tiny remainder up to 50ms.
+            guard let accessibilityTimeout = Self.accessibilityTimeout(until: deadline) else {
+                return Self.unknownSample(
+                    request: request,
+                    application: application,
+                    reason: "Verification deadline has insufficient time for a fresh accessibility traversal")
+            }
             // CoreGraphics may hide the caller's title even when the Bridge host can read it through AX.
             let context = WindowContext(
                 applicationName: application.name,
@@ -205,16 +218,19 @@ extension VerifyStateTool {
                 includeMenuBarElements: false,
                 traversalBudget: nil,
                 requiresFreshAccessibilityTree: true,
-                accessibilityTimeoutSeconds: min(max(remainingSeconds, 0.05), 10))
+                accessibilityTimeoutSeconds: accessibilityTimeout)
             do {
                 let result = try await self.context.automation.inspectAccessibilityTree(windowContext: context)
                 if let reason = await identityTracker.validate(resolvedApplication) {
-                    return Self.unknownSample(request: request, application: application, reason: reason)
+                    return Self.unknownSample(
+                        request: request,
+                        application: application,
+                        reason: reason)
                 }
                 let completionWindowResolution = await self.resolveWindow(
                     request: request,
                     application: resolvedApplication,
-                    remainingSeconds: remainingSeconds,
+                    remainingSeconds: max(Self.seconds(ContinuousClock.now.duration(to: deadline)), 0),
                     identityTracker: identityTracker)
                 let completionWindow: ServiceWindowInfo
                 switch completionWindowResolution {
@@ -235,7 +251,10 @@ extension VerifyStateTool {
                         reason: "Target window identity or bounds changed during accessibility inspection")
                 }
                 if let reason = await identityTracker.validate(resolvedApplication) {
-                    return Self.unknownSample(request: request, application: application, reason: reason)
+                    return Self.unknownSample(
+                        request: request,
+                        application: application,
+                        reason: reason)
                 }
                 let accessibilityEvidence = Self.accessibilityEvidence(
                     result,
@@ -248,7 +267,10 @@ extension VerifyStateTool {
                     accessibilityEvidence: accessibilityEvidence)
             } catch {
                 if let reason = await identityTracker.validate(resolvedApplication) {
-                    return Self.unknownSample(request: request, application: application, reason: reason)
+                    return Self.unknownSample(
+                        request: request,
+                        application: application,
+                        reason: reason)
                 }
                 return Self.evaluate(
                     request: request,
@@ -513,7 +535,8 @@ extension VerifyStateTool {
            truncation.maxDepthReached || truncation.maxElementCountReached ||
            truncation.maxChildrenPerNodeReached || truncation.deadlineReached
         {
-            return .unavailable("Accessibility traversal was truncated")
+            return .unavailable("Accessibility traversal was truncated: " +
+                truncation.automationToolRemediationMessage(budget: result.metadata.windowContext?.traversalBudget))
         }
         let incompleteRead = result.metadata.truncationInfo?.incompleteAccessibilityRead == true
         let expectedWarnings = incompleteRead ? Set(["ax_incomplete_read"]) : []
@@ -537,6 +560,15 @@ extension VerifyStateTool {
                 reason: "Accessibility traversal was incomplete because one or more AX reads failed")
         }
         return .complete(result.elements.all)
+    }
+
+    static func accessibilityTimeout(
+        until deadline: ContinuousClock.Instant,
+        now: ContinuousClock.Instant = .now) -> TimeInterval?
+    {
+        let remaining = Self.seconds(now.duration(to: deadline))
+        // ElementDetectionService's smallest supported hard timeout is 50ms.
+        return remaining >= 0.05 ? min(remaining, 10) : nil
     }
 
     private static func seconds(_ duration: Duration) -> TimeInterval {

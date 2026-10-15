@@ -1,0 +1,29 @@
+{
+  "order": [
+    "before",
+    "after",
+    "after",
+    "before",
+    "before",
+    "after",
+    "after",
+    "before",
+    "before",
+    "after"
+  ],
+  "trials_per_version": 5,
+  "pid": 24935,
+  "window": 144370,
+  "startup_and_server_preparation_excluded": true,
+  "llm_included": false,
+  "binaries": {
+    "before": {
+      "path": "/private/tmp/peekaboo-baseline",
+      "sha256": "95c61d71d4e4b6a898c1addaab3bfdef083e2e2e8ac95d3c98e9fd161dac6ab9"
+    },
+    "after": {
+      "path": "/Users/sora/Code/Peekaboo/Apps/CLI/.build/out/Products/Debug/peekaboo",
+      "sha256": "d6a95f420fd37f865d1aa1a4639625f80f87c8441e4f50c6552c9e8d392dd753"
+    }
+  }
+}

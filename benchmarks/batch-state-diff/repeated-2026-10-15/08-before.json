@@ -1,0 +1,10 @@
+{
+  "success": false,
+  "mode": "sequential",
+  "text": "Peekaboo 12056573 A08",
+  "phase": "preparation",
+  "error": "{'is_error': True, 'tool': None, 'meta': {'dispatch_state': 'none', 'effect': 'refused', 'escalation': 'correct_request', 'evidence': 'request_refused', 'mutation_dispatched': False, 'requires_fresh_observation': False, 'retry_safe': True, 'retry_safety': 'safe', 'state': 'refused', 'target_receipt': {'pid': 24935, 'process_start_identity': 1790525405392460, 'process_start_identity_decimal': '1790525405392460', 'window_id': 144370}}, 'message': 'Could not find accessibility element for window ID 144370 axElementNotFound(144370) Use a window and host that support focus window.', 'verification': None}",
+  "trial": 8,
+  "version": "before",
+  "exit_code": 1
+}

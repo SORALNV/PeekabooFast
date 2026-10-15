@@ -22,6 +22,7 @@ public enum ToolType: String, CaseIterable, Sendable {
     // MARK: - UI Automation
 
     case click
+    case executeSteps = "execute_steps"
     case type
     case setValue = "set_value"
     case selectText = "select_text"
@@ -90,6 +91,7 @@ public enum ToolType: String, CaseIterable, Sendable {
     case findElement = "find_element"
     case listElements = "list_elements"
     case focused
+    case getStateDiff = "get_state_diff"
     case inspectUI = "inspect_ui"
     case verifyState = "verify_state"
 
@@ -126,7 +128,7 @@ public enum ToolType: String, CaseIterable, Sendable {
         switch self {
         case .see, .image, .capture, .screenshot, .windowCapture, .analyze:
             .vision
-        case .click, .type, .setValue, .selectText, .action, .press, .drag, .move, .scroll, .paste,
+        case .executeSteps, .click, .type, .setValue, .selectText, .action, .press, .drag, .move, .scroll, .paste,
              .performAction, .hotkey, .swipe:
             .ui
         case .app, .launchApp, .listApps, .quitApp, .focusApp, .hideApp, .unhideApp, .switchApp:
@@ -137,7 +139,7 @@ public enum ToolType: String, CaseIterable, Sendable {
             .menu
         case .dock, .listDock, .dockClick, .dockLaunch:
             .dock
-        case .list, .findElement, .listElements, .focused, .inspectUI, .verifyState:
+        case .list, .findElement, .listElements, .focused, .inspectUI, .verifyState, .getStateDiff:
             .element
         case .browser:
             .browser
@@ -225,6 +227,8 @@ public enum ToolType: String, CaseIterable, Sendable {
         case .taskCompleted: "Task Completed"
         case .needMoreInformation: "Need More Information"
         case .needInfo: "Need Information"
+        case .executeSteps: "Execute Steps"
+        case .getStateDiff: "Compare UI States"
         case .inspectUI: "Inspect UI"
         case .verifyState: "Verify State"
         case .clipboard: "Clipboard"

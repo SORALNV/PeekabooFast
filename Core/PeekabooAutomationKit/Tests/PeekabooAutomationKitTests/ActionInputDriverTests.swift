@@ -8,6 +8,74 @@ import Testing
 @testable import PeekabooAutomationKit
 
 struct ActionInputDriverTests {
+    @MainActor
+    @Test
+    func `click selects a writable row without AXPress using background value delivery`() async throws {
+        let element = ActionInputMockAutomationElement(
+            role: kAXRowRole, isSelectedSettable: true, selectedValue: false)
+        var validated = false
+        let result = try await ActionInputDriver().tryClickForTesting(element: element, beforeMutation: {
+            validated = true
+        })
+        #expect(validated)
+        #expect(element.setSelectedValues == [true])
+        #expect(element.performedActions.isEmpty && element.setFocusedValues.isEmpty)
+        #expect(result.actionName == kAXSelectedAttribute)
+        #expect(result.outcome.state == .dispatchedUnverified)
+        #expect(result.outcome.delivery?.mode == .background)
+        #expect(result.outcome.delivery?.mechanism == .accessibilityValue)
+    }
+
+    @MainActor
+    @Test(arguments: [0, 1, 2])
+    func `row selection respects value policy enabled state and row role`(rejection: Int) async {
+        let element = ActionInputMockAutomationElement(
+            role: rejection == 2 ? kAXGroupRole : kAXRowRole,
+            isSelectedSettable: true,
+            selectedValue: false,
+            isEnabled: rejection != 1)
+        await #expect(throws: ActionInputError.self) {
+            _ = try await ActionInputDriver().tryClickForTesting(
+                element: element, allowAccessibilityValueFallback: rejection != 0)
+        }
+        #expect(element.setSelectedValues.isEmpty)
+    }
+
+    @MainActor
+    @Test
+    func `row selection validates ownership before dispatch and skips already selected rows`() async throws {
+        let element = ActionInputMockAutomationElement(
+            role: kAXRowRole, isSelectedSettable: true, selectedValue: false)
+        await #expect(throws: ActionInputError.self) {
+            _ = try await ActionInputDriver().tryClickForTesting(element: element, beforeMutation: {
+                throw ActionInputError.staleElement
+            })
+        }
+        #expect(element.setSelectedValues.isEmpty)
+        element.selectedValue = true
+        let result = try await ActionInputDriver().tryClickForTesting(element: element)
+        #expect(result.outcome.state == .confirmedNoChange)
+        #expect(element.setSelectedValues.isEmpty)
+    }
+
+    @MainActor
+    @Test
+    func `row click prefers AXPress and never selects after uncertain press failure`() async throws {
+        let element = ActionInputMockAutomationElement(
+            role: kAXRowRole, actionNames: [kAXPressAction], isSelectedSettable: true, selectedValue: false)
+        _ = try await ActionInputDriver().tryClickForTesting(element: element)
+        #expect(element.performedActions == [kAXPressAction] && element.setSelectedValues.isEmpty)
+        let uncertain = ActionInputMockAutomationElement(
+            role: kAXRowRole,
+            actionNames: [kAXPressAction],
+            isSelectedSettable: true,
+            actionErrors: [kAXPressAction: AccessibilitySystemError(.cannotComplete)])
+        await #expect(throws: ActionInputError.self) {
+            _ = try await ActionInputDriver().tryClickForTesting(element: uncertain)
+        }
+        #expect(uncertain.setSelectedValues.isEmpty)
+    }
+
     @Test
     func `classifies unsupported AX action as fallback-eligible`() {
         let error = ActionInputDriver.classify(AccessibilitySystemError(.actionUnsupported))

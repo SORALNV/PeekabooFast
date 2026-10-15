@@ -3,6 +3,31 @@ import Testing
 @testable import PeekabooAgentRuntime
 
 struct AgentSystemPromptTests {
+    @Test
+    func `batch and diff guidance follows exposed tools without broadening authority`() {
+        let sparse = AgentSystemPrompt.generate(availableToolNames: ["permissions"])
+        #expect(!sparse.contains("Use `execute_steps`"))
+        #expect(!sparse.contains("Use `get_state_diff`"))
+        let prompt = AgentSystemPrompt.generate(availableToolNames: ["execute_steps", "get_state_diff"])
+        #expect(prompt.contains("children have the same authority as separate calls"))
+        #expect(prompt.contains("Never reuse stale element"))
+        #expect(prompt.contains("retained same-target snapshots"))
+        #expect(prompt.contains("immutable background-only authority"))
+        #expect(prompt.contains("unless the user already authorized that specific action and scope"))
+    }
+
+    @Test(arguments: [MCPToolExecutionPolicy.backgroundOnly, .foregroundAllowed, .unrestricted])
+    func `all authority levels retain noninterference and bounded unattended testing guidance`(
+        _ policy: MCPToolExecutionPolicy)
+    {
+        let prompt = AgentSystemPrompt.generate(executionPolicy: policy, availableToolNames: ["permissions"])
+        #expect(prompt.contains("Preserve the user's workspace"))
+        #expect(prompt.contains("Setup that covers the user's work is interference"))
+        #expect(prompt.contains("expires when the user returns or the interval ends"))
+        #expect(prompt.contains("stop interfering UI operations immediately"))
+        #expect(prompt.contains("a failed prerequisite, not permission to force focus"))
+    }
+
     @Test(arguments: [Set<String>(), Set(["permissions"]), Set(["permissions", "sleep", "done", "need_info"])])
     func `sparse catalogs shrink recipes without dropping authority or evidence constraints`(_ names: Set<String>) {
         let prompt = AgentSystemPrompt.generate(availableToolNames: names)

@@ -1,0 +1,18 @@
+{
+  "mode": "batch",
+  "elapsed_ms": 10960.493917,
+  "mcp_calls": 1,
+  "driver_steps": 11,
+  "verifications": 5,
+  "success": true,
+  "initial_state": "server",
+  "recipient": "たぬき",
+  "text": "PeekabooFast web route 08",
+  "background_only": true,
+  "llm_included": false,
+  "composer_empty": true,
+  "exploratory_trial": 6,
+  "conditions": "experimental web focus route, enhanced AX; all click receipts actually used accessibility_action",
+  "controlled_comparison": false,
+  "workspace_preservation_certified": false
+}
